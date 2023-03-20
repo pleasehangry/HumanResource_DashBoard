@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   AiFillBell,
   AiFillCaretDown,
@@ -11,6 +12,7 @@ import {
 
 import { UserProfile } from "./";
 import { useStateContext } from "../context/ContextProvider";
+import { fadeIn } from "../utils/motion";
 
 const NavButton = ({ title, customFunc, icon, dotColor }) => (
   <button
@@ -53,7 +55,12 @@ const Navbar = () => {
     }
   }, [screenSize]);
   return (
-    <div className="flex justify-between p-2 md:mx-6 relative ">
+    <motion.div
+      variants={fadeIn("down", "spring", 0.3, 1)}
+      initial="hidden"
+      animate="show"
+      className="flex justify-between p-2 md:mx-6 relative"
+    >
       <NavButton
         title="Menu"
         customFunc={() => setActiveMenu((prevActiveMenu) => !prevActiveMenu)}
@@ -102,7 +109,7 @@ const Navbar = () => {
         {isClicked.notification && <Notification />} */}
         {isClicked.userProfile && <UserProfile />}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
-import AnimationVideo from "../assets/AnimationVideo.mp4";
+import AnimationVideo from "../../assets/AnimationVideo.mp4";
 
 const Login = () => {
   const [email, setEmail] = useState("");

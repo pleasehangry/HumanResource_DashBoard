@@ -77,9 +77,14 @@ export const slideIn = (direction, type, delay, duration) => {
 
 export const staggerContainer = (staggerChildren, delayChildren) => {
   return {
-    hidden: {},
+    hidden: {
+      opacity: 0,
+    },
     show: {
+      opacity: 1,
       transition: {
+        type: "spring",
+        when: "beforeChildren",
         staggerChildren: staggerChildren,
         delayChildren: delayChildren || 0,
       },

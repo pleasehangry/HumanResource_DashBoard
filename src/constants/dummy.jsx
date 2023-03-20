@@ -5,7 +5,7 @@ export const links = [
     title: "Pages",
     links: [
       {
-        name: "orders",
+        name: "attendance",
         icon: <AiOutlineContacts />,
       },
       {
