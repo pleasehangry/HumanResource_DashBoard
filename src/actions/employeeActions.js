@@ -70,17 +70,21 @@ export const updateEmployeeProfile = (id, employee) => async (dispatch) => {
   }
 };
 
-export const listEmployees = () => async (dispatch) => {
+export const fetchEmployees = (page) => async (dispatch) => {
   try {
     dispatch({
       type: actionType.START_LOADING,
     });
 
     const { data } = await api.fetchEmployees();
+    const numberOfPages = data / 10; // 10 is number of items per page
+    const startIndex = (page - 1) * 10;
+    const endIndex = startIndex + 10;
+    const paginatedData = employeesData.slice(startIndex, endIndex);
 
     dispatch({
       type: actionType.EMPLOYEE_LIST_SUCCESS,
-      payload: data,
+      payload: [paginatedData, page, numberOfPages],
     });
   } catch (error) {
     const message =

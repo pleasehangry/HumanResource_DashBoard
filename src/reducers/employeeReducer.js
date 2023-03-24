@@ -1,6 +1,12 @@
 import * as actionType from "../constants/employeeConstants";
 
-const employeeReducer = (state = { employees: [], loading: false }, action) => {
+const initialState = {
+  employees: [],
+  currentPage: 1,
+  numberOfPage: 1,
+};
+
+const employeeReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionType.START_LOADING:
       return { ...state, loading: true };
@@ -15,7 +21,13 @@ const employeeReducer = (state = { employees: [], loading: false }, action) => {
         employees: [...employees, action.payload],
       };
     case actionType.EMPLOYEE_LIST_SUCCESS:
-      return { ...state, loading: false, employees: action.payload };
+      return {
+        ...state,
+        loading: false,
+        employees: action.payload,
+        currentPage: action.payload.currentPage,
+        numberOfPage: action.payload.numberOfPage,
+      };
     case actionType.EMPLOYEE_UPDATE_PROFILE_SUCCESS:
       return {
         ...state,
