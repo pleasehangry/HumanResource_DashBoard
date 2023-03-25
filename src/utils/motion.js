@@ -53,6 +53,9 @@ export const zoomIn = (delay, duration) => {
         ease: "easeOut",
       },
     },
+    whileHover: {
+      y: -10,
+    },
   };
 };
 

@@ -1,19 +1,38 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
 import {
   AiOutlineOrderedList,
   AiOutlinePicLeft,
   AiOutlineSearch,
 } from "react-icons/ai";
 
-import DropdownFilter from "../components/DropdownFilter";
 import { textVariant, zoomIn } from "../utils/motion";
 
+import { EmployeeDeleteModal } from "./";
+import { deleteEmployee } from "../actions/employeeActions";
+
 const Employees = () => {
-  const today = new Date().toISOString().substr(0, 10);
-  const [date, setDate] = useState(today);
+  const dispatch = useDispatch();
   const [isListView, setIsListView] = useState(false);
-  const [employees, setEmpoyees] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [selectedId, setSelectedId] = useState(null);
+
+  const employees = useSelector((state) => state.employees);
+  const currentPage = useSelector((state) => state.currentPage);
+  const numberOfPages = useSelector((state) => state.numberOfPages);
+
+  const handleEdit = (id) => {};
+  const handleDelete = (id) => {
+    setSelectedId(id);
+    setIsModalOpen(true);
+    console.log(selectedId);
+  };
+
+  const handleConfirm = (id) => {
+    dispatch(deleteEmployee(id));
+  };
 
   return (
     <div className="container mx-auto px-4 sm:px-8 border border-slate-200 rounded-xl">
@@ -37,16 +56,8 @@ const Employees = () => {
               duration: 1,
               bounce: 0.1,
             }}
-            className="flex flex-row mb-1 sm:mb-0 sm:flex-row border border-slate-500 rounded-md"
+            className="flex flex-row mb-1 sm:mb-0 sm:flex-row border border-slate-500 rounded-md overflow-hidden"
           >
-            <DropdownFilter
-              label="Sắp sếp"
-              options={["Thấp đến cao", "Cao đến thấp"]}
-            />
-            <DropdownFilter
-              label="Sắp sếp"
-              options={["Thấp đến cao", "Cao đến thấp"]}
-            />
             <div className="flex items-center justify-center border ">
               <input
                 placeholder="Search"
@@ -56,41 +67,6 @@ const Employees = () => {
                 <AiOutlineSearch />
               </span>
             </div>
-            <div className="p-2 block items-center">
-              <input
-                className="outline-none text-base font-light"
-                placeholder="halo"
-                type="date"
-                defaultValue={today}
-              />
-            </div>
-          </motion.div>
-          <motion.div
-            variants={zoomIn(0.5, 0.3)}
-            initial="hidden"
-            animate="show"
-            className="flex items-center justify-center p-2 bg-slate-200 ml-auto rounded-md"
-          >
-            <button
-              className={`p-1 ${isListView && "bg-white"} rounded-sm`}
-              onClick={() => {
-                setIsListView(true);
-              }}
-            >
-              <span className="text-xl font-semibold">
-                <AiOutlineOrderedList />
-              </span>
-            </button>
-            <button
-              className={`p-1 rounded-sm ${!isListView && "bg-white"}`}
-              onClick={() => {
-                setIsListView(false);
-              }}
-            >
-              <span className="text-xl font-semibold">
-                <AiOutlinePicLeft />
-              </span>
-            </button>
           </motion.div>
         </div>
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
@@ -109,6 +85,9 @@ const Employees = () => {
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Status
+                  </th>
+                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -146,6 +125,28 @@ const Employees = () => {
                       ></span>
                       <span className="relative">Activo</span>
                     </span>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <motion.button
+                      variants={zoomIn(0.3, 0.5)}
+                      initial="hidden"
+                      whileInView="show"
+                      whileHover="whileHover"
+                      className="p-2 px-4 mr-2 bg-yellow-500 rounded-md text-textColor shadow-md"
+                      onClick={() => handleEdit(employee.id)}
+                    >
+                      Edit
+                    </motion.button>
+                    <motion.button
+                      variants={zoomIn(0.3, 0.5)}
+                      initial="hidden"
+                      whileInView="show"
+                      whileHover="whileHover"
+                      className="p-2 bg-red-300 rounded-md text-textColor shadow-md"
+                      onClick={() => handleDelete(1)}
+                    >
+                      Delete
+                    </motion.button>
                   </td>
                 </tr>
                 <tr>
@@ -271,6 +272,13 @@ const Employees = () => {
           </div>
         </div>
       </div>
+
+      <EmployeeDeleteModal
+        isOpen={isModalOpen}
+        employeeId={selectedId}
+        onConfirm={handleConfirm}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

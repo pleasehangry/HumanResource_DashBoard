@@ -77,7 +77,7 @@ export const fetchEmployees = (page) => async (dispatch) => {
     });
 
     const { data } = await api.fetchEmployees();
-    const numberOfPages = data / 10; // 10 is number of items per page
+    const numberOfPages = data / 10 + 1; // 10 is number of items per page
     const startIndex = (page - 1) * 10;
     const endIndex = startIndex + 10;
     const paginatedData = employeesData.slice(startIndex, endIndex);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   AiOutlineOrderedList,
   AiOutlinePicLeft,
@@ -53,7 +54,7 @@ const Attendance = () => {
   }, [currentPage, numberOfPages, dispatch]);
 
   const handlePageChange = (pageNumber) => {
-    fetchEmployees(pageNumber);
+    dispatch(fetchEmployees(pageNumber));
   };
 
   return (
@@ -78,16 +79,8 @@ const Attendance = () => {
               duration: 1,
               bounce: 0.1,
             }}
-            className="flex flex-row mb-1 sm:mb-0 sm:flex-row border border-slate-500 rounded-md"
+            className="flex flex-row mb-1 sm:mb-0 sm:flex-row border border-slate-500 rounded-md overflow-hidden"
           >
-            <DropdownFilter
-              label="Sắp sếp"
-              options={["Thấp đến cao", "Cao đến thấp"]}
-            />
-            <DropdownFilter
-              label="Sắp sếp"
-              options={["Thấp đến cao", "Cao đến thấp"]}
-            />
             <div className="flex items-center justify-center border ">
               <input
                 placeholder="Search"
@@ -97,9 +90,9 @@ const Attendance = () => {
                 <AiOutlineSearch />
               </span>
             </div>
-            <div className="p-2 block items-center">
+            <div className="p-2 block items-center bg-white">
               <input
-                className="outline-none text-base font-light"
+                className="outline-none text-base font-light from-neutral-400 "
                 placeholder="halo"
                 type="date"
                 defaultValue={today}
@@ -134,129 +127,147 @@ const Attendance = () => {
             </button>
           </motion.div>
         </div>
-        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-          {isListView ? (
-            <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-              <table className="min-w-full leading-normal">
-                <thead>
-                  <tr>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      User
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Rol
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Created at
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employees.map((employee, i) => (
-                    <tr key={i}>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10">
-                            <img
-                              className="w-full h-full rounded-full"
-                              src={employee.img}
-                              alt=""
-                            />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap">
-                              {employee.first_name}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          {employee.position}
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Jan 21, 2020
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                          <span
-                            aria-hidden
-                            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                          ></span>
-                          <span className="relative">Activo</span>
-                        </span>
-                      </td>
+        {employees.length > 0 ? (
+          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+            {isListView ? (
+              <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+                <table className="min-w-full leading-normal">
+                  <thead>
+                    <tr>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Tên
+                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Vị trí
+                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Created at
+                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Tình trạng
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="container bg-white border rounded-md py-5 px-1">
-              <div className="grid grid-cols-4 gap-4">
-                {employees.map((employee) => (
-                  <div
-                    key={employee.id}
-                    className={`flex flex-col items-center ${
-                      false ? "bg-green-200" : "bg-red-200"
-                    } shadow-lg rounded-lg overflow-hidden`}
-                  >
-                    <img
-                      src={employee.img}
-                      className="w-32 h-32 object-cover rounded-full mt-5"
-                    />
-                    <div className="p-4">
-                      <h2 className="text-lg font-semibold text-slate-800 text-center ">
-                        {employee.last_name} {employee.first_name}
-                      </h2>
-                      <p className="text-slate-800">{employee.position}</p>
-                      <p className="text-slate-800 text-center">Active</p>
-                    </div>
-                  </div>
-                ))}
+                  </thead>
+                  <tbody>
+                    {employees.map((employee, i) => (
+                      <motion.tr
+                        variants={zoomIn(i * 0.03, 0.5)}
+                        initial="hidden"
+                        whileInView="show"
+                        whileHover="whileHover"
+                        key={i}
+                      >
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <a
+                            className="flex items-center"
+                            href={`/users/${employee.id}`}
+                          >
+                            <div className="flex-shrink-0 w-10 h-10">
+                              <img
+                                className="w-full h-full rounded-full"
+                                src={employee.img}
+                                alt=""
+                              />
+                            </div>
+                            <div className="ml-3">
+                              <p className="text-gray-900 whitespace-no-wrap">
+                                {employee.first_name}
+                              </p>
+                            </div>
+                          </a>
+                        </td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap">
+                            {employee.position}
+                          </p>
+                        </td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap">
+                            Jan 21, 2020
+                          </p>
+                        </td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                            <span
+                              aria-hidden
+                              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+                            ></span>
+                            <span className="relative">Activo</span>
+                          </span>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            </div>
-          )}
-          <div className="mt-10">
-            <ul className="inline-flex justify-center w-full -space-x-px mx-auto">
-              <li>
-                <button
-                  disabled={currentPage == 1}
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 ml-0 rounded-l-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  Prev
-                </button>
-              </li>
-              {Array.from({ length: numberOfPages }).map((_, i) => (
+            ) : (
+              <div className="container bg-white border rounded-md py-5 px-1">
+                <div className="grid grid-cols-4 gap-4">
+                  {employees.map((employee, i) => (
+                    <motion.a
+                      href={`/users/${employee.id}`}
+                      key={employee.id}
+                      variants={zoomIn(i * 0.05, 0.5)}
+                      initial="hidden"
+                      whileInView="show"
+                      whileHover="whileHover"
+                      className={`flex flex-col items-center ${
+                        false ? "bg-green-200" : "bg-red-200"
+                      } shadow-lg rounded-lg overflow-hidden`}
+                    >
+                      <img
+                        src={employee.img}
+                        className="w-32 h-32 object-cover rounded-full mt-5"
+                      />
+                      <div className="p-4">
+                        <h2 className="text-lg font-semibold text-slate-800 text-center ">
+                          {employee.last_name} {employee.first_name}
+                        </h2>
+                        <p className="text-slate-800">{employee.position}</p>
+                        <p className="text-slate-800 text-center">Active</p>
+                      </div>
+                    </motion.a>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="mt-10">
+              <ul className="inline-flex justify-center w-full -space-x-px mx-auto">
                 <li>
                   <button
-                    key={i}
-                    onClick={() => handlePageChange(i + 1)}
-                    className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    disabled={currentPage == 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 ml-0 rounded-l-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
-                    {i + 1}
+                    Prev
                   </button>
                 </li>
-              ))}
-              <li>
-                <button
-                  disabled={currentPage === numberOfPages}
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  Next
-                </button>
-              </li>
-            </ul>
+                {Array.from({ length: numberOfPages }).map((_, i) => (
+                  <li>
+                    <button
+                      key={i}
+                      onClick={() => handlePageChange(i + 1)}
+                      className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      {i + 1}
+                    </button>
+                  </li>
+                ))}
+                <li>
+                  <button
+                    disabled={currentPage === numberOfPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
+        ) : (
+          <h3>Chưa có dữ liệu</h3>
+        )}
       </div>
     </div>
   );
