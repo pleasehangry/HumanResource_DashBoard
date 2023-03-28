@@ -32,13 +32,10 @@ const Sidebar = () => {
         type: "tween",
       },
     },
-    whilehover: {
-      scale: 1.1,
-    },
   };
 
   const activeLink =
-    "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white  text-md m-2";
+    "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white text-md m-2";
   const normalLink =
     "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2";
 
@@ -83,17 +80,16 @@ const Sidebar = () => {
                 variants={menuVariant}
                 initial="hidden"
                 animate="show"
-                whileHover="whilehover"
                 key={item.title}
               >
                 <p className="text-gray-400 m-3 mt-4 uppercase">{item.title}</p>
                 {item.links.map((link) => (
                   <NavLink
-                    to={`/${link.name}`}
+                    to={`/${link.link}`}
                     style={({ isActive }) => ({
                       backgroundColor: isActive ? "#ccc" : "",
                     })}
-                    key={link.name}
+                    key={link.link}
                     onClick={handleCloseSidebar}
                     className={({ isActive }) =>
                       isActive ? activeLink : normalLink

@@ -1,4 +1,13 @@
-import { AiOutlineContacts, AiOutlineShoppingCart } from "react-icons/ai";
+import {
+  AiOutlineProject,
+  AiOutlineTeam,
+  AiOutlineUser,
+  AiOutlineUserSwitch,
+} from "react-icons/ai";
+
+import routesConfig from "../config/route";
+
+import { BsChatDots, BsChatDotsFill } from "react-icons/bs";
 
 export const links = [
   {
@@ -6,15 +15,28 @@ export const links = [
     links: [
       {
         name: "attendance",
-        icon: <AiOutlineContacts />,
+        icon: <AiOutlineUserSwitch />,
+        link: routesConfig.attendance,
       },
       {
         name: "employees",
-        icon: <AiOutlineContacts />,
+        icon: <AiOutlineTeam />,
+        link: routesConfig.employees,
+      },
+      // {
+      //   name: "Me",
+      //   icon: <AiOutlineUser />,
+      //   link: routesConfig.profile,
+      // },
+      {
+        name: "Task",
+        icon: <AiOutlineProject />,
+        link: routesConfig.task,
       },
       {
-        name: "customers",
-        icon: <AiOutlineContacts />,
+        name: "Chat",
+        icon: <BsChatDots />,
+        link: routesConfig.chat,
       },
     ],
   },

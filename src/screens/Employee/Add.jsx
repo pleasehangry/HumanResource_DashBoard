@@ -5,6 +5,7 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 
 import defaultAvatar from "../../assets/images/default_avatar.png";
 import InputForm from "./InputForm";
+import { Button } from "../../components";
 
 const AddEmployee = () => {
   const dispatch = useDispatch();
@@ -126,19 +127,7 @@ const AddEmployee = () => {
             handleChange={handleChange}
             value={formData.age}
           />
-          <motion.button
-            className="p-3 border-none bg-purple-700 cursor-pointer text-white font-semibold rounded-md divide-y-2 mt-2"
-            type="submit"
-            whileHover={{
-              scale: 1.05,
-              opacity: 0.9,
-              boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.25)",
-              transition: { duration: 0.2 },
-            }}
-            onTap={{ scale: 0.9, transition: { duration: 0.3 } }}
-          >
-            Lưu
-          </motion.button>
+          <Button label="Lưu" className="" />
         </div>
       </form>
     </motion.div>

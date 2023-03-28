@@ -1,27 +1,74 @@
-import React from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import classNames from "classnames";
 
-const Button = ({
-  icon,
-  bgColor,
-  color,
-  bgHoverColor,
-  size,
-  text,
-  borderRadius,
-  width,
-}) => {
-  //   const { setIsClicked, initialState } = useStateContext();
+function Button({
+  to,
+  href,
+  primary = false,
+  outline = false,
+  small = false,
+  large = false,
+  text = false,
+  disabled = false,
+  rounded = false,
+  leftIcon,
+  rightIcon,
+  children,
+  className,
+  onClick,
+  ...passProps
+}) {
+  let Comp = "button";
+  const props = {
+    onClick,
+    ...passProps,
+  };
+  if (to) {
+    props.to = to;
+    Comp = Link;
+  } else if (href) {
+    props.href = href;
+    Comp = "a";
+  }
+  const classes = classNames(
+    "px-4 py-2 font-semibold rounded-md shadow-sm text-white transition-colors duration-300 ease-in-out cursor-pointer",
+    {
+      "bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2":
+        primary,
+      "bg-white border-2 border-black text-black shadow-lg hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2":
+        outline,
+      "bg-white hover:bg-blue-100 text-blue-900 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2":
+        text,
+      "bg-blue-300 text-white opacity-50 cursor-not-allowed": disabled,
+      "text-sm": small,
+      "text-lg": large,
+      "rounded-full": rounded,
+      [className]: className,
+    }
+  );
+  if (disabled) {
+    delete props.onClick;
+  }
+
+  const variants = {
+    normal: {
+      backgroundPosition: "100% 0%",
+      transition: { duration: 0.3 },
+    },
+    loading: {
+      backgroundPosition: "0% 0%",
+      transition: { duration: 0.8 },
+    },
+  };
 
   return (
-    <button
-      type="button"
-      onClick={() => setIsClicked(initialState)}
-      style={{ backgroundColor: bgColor, color, borderRadius }}
-      className={` text-${size} p-3 w-${width} hover:drop-shadow-xl hover:bg-${bgHoverColor}`}
-    >
-      {icon} {text}
-    </button>
+    <Comp className={classes} {...props}>
+      {leftIcon && <span className="mr-2">{leftIcon}</span>}
+      <span>{children}</span>
+      {rightIcon && <span className="ml-2">{rightIcon}</span>}
+    </Comp>
   );
-};
+}
 
 export default Button;
