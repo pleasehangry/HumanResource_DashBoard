@@ -21,6 +21,7 @@ const AddInforForm = () => {
     country: "",
     img: "",
   });
+  const [vadidErrors, setvadidErrors] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

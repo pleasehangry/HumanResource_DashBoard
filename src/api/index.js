@@ -16,7 +16,7 @@ export const register = (formdata) => API.post("/auth/register", formdata);
 
 // USER
 export const fetchEmployee = (id) => API.get(`/employee/${id}`);
-export const addEmployee = (formdata) => API.get(`/employee/add`, formdata);
+export const addEmployee = (formdata) => API.post(`/employee/add`, formdata);
 export const fetchEmployees = () => API.get(`/employees`);
 export const updateEmployee = (id, updatedUser) =>
   API.put(`/employee/${id}`, updatedUser);

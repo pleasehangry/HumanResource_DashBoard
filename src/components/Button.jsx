@@ -32,7 +32,7 @@ function Button({
     Comp = "a";
   }
   const classes = classNames(
-    "px-4 py-2 font-semibold rounded-md shadow-sm text-white transition-colors duration-300 ease-in-out cursor-pointer",
+    "px-4 py-2 min-w-[70px] font-semibold rounded-md shadow-sm text-white cursor-pointer overflow-hidden",
     {
       "bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2":
         primary,
@@ -51,22 +51,25 @@ function Button({
     delete props.onClick;
   }
 
-  const variants = {
-    normal: {
-      backgroundPosition: "100% 0%",
-      transition: { duration: 0.3 },
-    },
-    loading: {
-      backgroundPosition: "0% 0%",
-      transition: { duration: 0.8 },
-    },
-  };
-
   return (
-    <Comp className={classes} {...props}>
-      {leftIcon && <span className="mr-2">{leftIcon}</span>}
-      <span>{children}</span>
-      {rightIcon && <span className="ml-2">{rightIcon}</span>}
+    <Comp {...props}>
+      <motion.div
+        className={classes}
+        whileHover={{
+          background:
+            "linear-gradient(to right, #ff416c, #ff4b2b, #ff4e50, #f9d423)",
+          filter: "hue-rotate(360deg)",
+          transition: {
+            type: "spring",
+            duration: 5,
+            repeat: Infinity,
+          },
+        }}
+      >
+        {leftIcon && <span className="mr-2 ">{leftIcon}</span>}
+        <span>{children}</span>
+        {rightIcon && <span className="ml-2">{rightIcon}</span>}
+      </motion.div>
     </Comp>
   );
 }

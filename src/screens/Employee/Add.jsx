@@ -1,14 +1,22 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { AiOutlineUserAdd } from "react-icons/ai";
 
 import defaultAvatar from "../../assets/images/default_avatar.png";
 import InputForm from "./InputForm";
 import { Button } from "../../components";
+import { addEmployee } from "../../actions/employeeActions";
 
 const AddEmployee = () => {
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.isLoading);
+
+  const [avatar, setAvatar] = useState({
+    file: null,
+    preview: defaultAvatar,
+  });
+
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -17,22 +25,78 @@ const AddEmployee = () => {
     position: "",
     age: "",
     country: "",
-    img: "",
+    img: avatar.file,
   });
+
+  const [authData, setAuthData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const clear = () => {
+    setFormData({
+      firstname: "",
+      lastname: "",
+      phone: "",
+      email: "",
+      password: "",
+      department: "",
+      position: "",
+      age: "",
+      country: "",
+      img: null,
+    });
+  };
+
+  const [vadidErrors, setvadidErrors] = useState({});
+
+  function validate(formData) {
+    // check each field for validity
+    if (!formData.firstname) {
+      vadidErrors.firstname = "First name is required";
+    }
+    if (!formData.lastname) {
+      vadidErrors.lastname = "Last name is required";
+    }
+    if (!formData.phone || !validator.isMobilePhone(formData.phone)) {
+      vadidErrors.phone = "Please enter a valid phone number";
+    }
+    if (!formData.department) {
+      vadidErrors.department = "Department is required";
+    }
+    if (!formData.position) {
+      vadidErrors.position = "Position is required";
+    }
+    if (
+      !formData.age ||
+      !validator.isInt(formData.age, { min: 18, max: 120 })
+    ) {
+      vadidErrors.age = "Age must be between 18 and 120";
+    }
+    if (!formData.country) {
+      vadidErrors.country = "Country is required";
+    }
+    if (!formData.img) {
+      vadidErrors.img = "Please upload an image";
+    }
+    vadidErrors;
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // dispatch action to add employee to redux store
+    const errors = validate(formData);
+    if (Object.keys(errors).length > 0) {
+      // handle errors
+    } else {
+      dispatch(addEmployee(formData));
+      dispatch(register(authData));
+      clear();
+    }
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  const [avatar, setAvatar] = useState({
-    file: null,
-    preview: defaultAvatar,
-  });
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -54,7 +118,6 @@ const AddEmployee = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       className="p-6 m-4 bg-white rounded-md shadow-md"
     >
       <div className="flex items-center justify-between mb-4">
@@ -74,7 +137,7 @@ const AddEmployee = () => {
             <input
               type="file"
               id="avatar"
-              name="avatar"
+              name="img"
               accept="image/*"
               onChange={handleAvatarChange}
               className="hidden"
@@ -95,9 +158,10 @@ const AddEmployee = () => {
           />
           <InputForm
             name="email"
+            type="email"
             Label="Email"
             handleChange={handleChange}
-            value={formData.name}
+            value={formData.email}
             colStart="col-start-1"
           />
           <InputForm

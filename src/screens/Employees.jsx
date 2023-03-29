@@ -11,6 +11,31 @@ import { textVariant, zoomIn } from "../utils/motion";
 
 import { EmployeeDeleteModal } from "./";
 import { deleteEmployee } from "../actions/employeeActions";
+import { Button } from "../components";
+
+const listEms = [
+  {
+    id: "1",
+    first_name: "Hoang",
+    last_name: "Hoang",
+    position: "CEO",
+    img: "https://th.bing.com/th?id=ORMS.2504fc7ad102f749b1f0cc03be698990&pid=Wdp&w=300&h=156&qlt=90&c=1&rs=1&dpr=1.5&p=0",
+  },
+  {
+    id: "2",
+    first_name: "Hoang",
+    last_name: "Hoang",
+    position: "CEO",
+    img: "https://th.bing.com/th?id=ORMS.2504fc7ad102f749b1f0cc03be698990&pid=Wdp&w=300&h=156&qlt=90&c=1&rs=1&dpr=1.5&p=0",
+  },
+  {
+    id: "3",
+    first_name: "Hoang",
+    last_name: "Hoang",
+    position: "CEO",
+    img: "https://th.bing.com/th?id=ORMS.2504fc7ad102f749b1f0cc03be698990&pid=Wdp&w=300&h=156&qlt=90&c=1&rs=1&dpr=1.5&p=0",
+  },
+];
 
 const Employees = () => {
   const dispatch = useDispatch();
@@ -19,7 +44,7 @@ const Employees = () => {
 
   const [selectedId, setSelectedId] = useState(null);
 
-  const employees = useSelector((state) => state.employees);
+  const employees = useSelector((state) => state.employees) || listEms;
   const currentPage = useSelector((state) => state.currentPage);
   const numberOfPages = useSelector((state) => state.numberOfPages);
 
@@ -75,200 +100,121 @@ const Employees = () => {
               <thead>
                 <tr>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    User
+                    Nhân Viên
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Rol
+                    Chức Vụ
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Created at
+                    Phòng Ban
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Status
+                    Tình Trạng
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Action
+                    Hành Động
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 w-10 h-10">
-                        <img
-                          className="w-full h-full rounded-full"
-                          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-                          alt=""
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Vera Carpenter
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Admin</p>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Jan 21, 2020
-                    </p>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                      <span
-                        aria-hidden
-                        className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                      ></span>
-                      <span className="relative">Activo</span>
-                    </span>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <motion.button
-                      variants={zoomIn(0.3, 0.5)}
-                      initial="hidden"
-                      whileInView="show"
-                      whileHover="whileHover"
-                      className="p-2 px-4 mr-2 bg-yellow-500 rounded-md text-textColor shadow-md"
-                      onClick={() => handleEdit(employee.id)}
-                    >
-                      Edit
-                    </motion.button>
-                    <motion.button
-                      variants={zoomIn(0.3, 0.5)}
-                      initial="hidden"
-                      whileInView="show"
-                      whileHover="whileHover"
-                      className="p-2 bg-red-300 rounded-md text-textColor shadow-md"
-                      onClick={() => handleDelete(1)}
-                    >
-                      Delete
-                    </motion.button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 w-10 h-10">
-                        <img
-                          className="w-full h-full rounded-full"
-                          src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-                          alt=""
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Blake Bowman
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Editor</p>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Jan 01, 2020
-                    </p>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                      <span
-                        aria-hidden
-                        className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                      ></span>
-                      <span className="relative">Activo</span>
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 w-10 h-10">
-                        <img
-                          className="w-full h-full rounded-full"
-                          src="https://images.unsplash.com/photo-1540845511934-7721dd7adec3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-                          alt=""
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Dana Moore
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Editor</p>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Jan 10, 2020
-                    </p>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <span className="relative inline-block px-3 py-1 font-semibold text-orange-900 leading-tight">
-                      <span
-                        aria-hidden
-                        className="absolute inset-0 bg-orange-200 opacity-50 rounded-full"
-                      ></span>
-                      <span className="relative">Suspended</span>
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-5 py-5 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 w-10 h-10">
-                        <img
-                          className="w-full h-full rounded-full"
-                          src="https://images.unsplash.com/photo-1522609925277-66fea332c575?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&h=160&w=160&q=80"
-                          alt=""
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Alonzo Cox
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-5 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Admin</p>
-                  </td>
-                  <td className="px-5 py-5 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Jan 18, 2020
-                    </p>
-                  </td>
-                  <td className="px-5 py-5 bg-white text-sm">
-                    <span className="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
-                      <span
-                        aria-hidden
-                        className="absolute inset-0 bg-red-200 opacity-50 rounded-full"
-                      ></span>
-                      <span className="relative">Inactive</span>
-                    </span>
-                  </td>
-                </tr>
+                {employees.map((employee, i) => (
+                  <motion.tr
+                    variants={zoomIn(i * 0.03, 0.5)}
+                    initial="hidden"
+                    whileInView="show"
+                    whileHover="whileHover"
+                    key={i}
+                  >
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <a
+                        className="flex items-center"
+                        href={`/users/${employee.id}`}
+                      >
+                        <div className="flex-shrink-0 w-10 h-10">
+                          <img
+                            className="w-full h-full rounded-full"
+                            src={employee.img}
+                            alt=""
+                          />
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-gray-900 whitespace-no-wrap">
+                            {employee.first_name}
+                          </p>
+                        </div>
+                      </a>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {employee.position}
+                      </p>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        Jan 21, 2020
+                      </p>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                        <span
+                          aria-hidden
+                          className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+                        ></span>
+                        <span className="relative">Activo</span>
+                      </span>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <Button
+                        className="mr-2 bg-yellow-500 rounded-md text-textColor shadow-md"
+                        onClick={() => handleEdit(employee.id)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        className=" bg-red-300 rounded-md text-textColor shadow-md"
+                        onClick={() => handleDelete(employee.id)}
+                      >
+                        Delete
+                      </Button>
+                    </td>
+                  </motion.tr>
+                ))}
               </tbody>
             </table>
-            <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
-              <span className="text-xs xs:text-sm text-gray-900">
-                Showing 1 to 4 of 50 Entries
-              </span>
-              <div className="inline-flex mt-2 xs:mt-0">
-                <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l">
+          </div>
+          {/* pagination */}
+          <div className="mt-10">
+            <ul className="inline-flex justify-center w-full -space-x-px mx-auto">
+              <li>
+                <button
+                  disabled={currentPage == 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 ml-0 rounded-l-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                >
                   Prev
                 </button>
-                <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r">
+              </li>
+              {Array.from({ length: numberOfPages }).map((_, i) => (
+                <li>
+                  <button
+                    key={i}
+                    onClick={() => handlePageChange(i + 1)}
+                    className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button
+                  disabled={currentPage === numberOfPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                >
                   Next
                 </button>
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

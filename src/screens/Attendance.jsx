@@ -231,6 +231,7 @@ const Attendance = () => {
                 </div>
               </div>
             )}
+            {/* pagination */}
             <div className="mt-10">
               <ul className="inline-flex justify-center w-full -space-x-px mx-auto">
                 <li>
