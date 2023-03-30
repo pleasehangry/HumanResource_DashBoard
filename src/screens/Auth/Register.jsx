@@ -3,7 +3,7 @@ import { FlatTree, motion } from "framer-motion";
 import validator from "validator";
 
 import AnimationVideo from "../../assets/AnimationVideo.mp4";
-import ValidateError from "./ValidateError";
+import { ValidateError } from "../../components";
 import InputForm from "../Employee/InputForm";
 import { useDispatch } from "react-redux";
 import defaultAvatar from "../../assets/images/default_avatar.png";
@@ -162,16 +162,15 @@ const Register = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // const errors = validate(email, password, confirmPassword);
+    const errors = validate(email, password, confirmPassword);
 
-    // if (Object.keys(errors).length === 0) {
-    //   // Form is valid - submit the data
-    //   console.log("Form submitted");
-    // } else {
-    //   // Form is invalid - display the errors
-    //   setErrors(errors);
-    // }
-    setIsRegisterView(false);
+    if (Object.keys(errors).length === 0) {
+      // Form is valid - submit the data
+      console.log("Form submitted");
+    } else {
+      // Form is invalid - display the errors
+      setErrors(errors);
+    }
   };
 
   return (

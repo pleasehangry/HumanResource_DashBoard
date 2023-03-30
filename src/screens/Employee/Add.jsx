@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { AiOutlineUserAdd } from "react-icons/ai";
+import validator from "validator";
 
 import defaultAvatar from "../../assets/images/default_avatar.png";
 import InputForm from "./InputForm";
+import { ValidateError } from "../../components";
 import { Button } from "../../components";
 import { addEmployee } from "../../actions/employeeActions";
+import { register } from "../../actions/authAction";
 
 const AddEmployee = () => {
   const dispatch = useDispatch();
@@ -24,8 +27,7 @@ const AddEmployee = () => {
     department: "",
     position: "",
     age: "",
-    country: "",
-    img: avatar.file,
+    img: null,
   });
 
   const [authData, setAuthData] = useState({
@@ -43,54 +45,49 @@ const AddEmployee = () => {
       department: "",
       position: "",
       age: "",
-      country: "",
       img: null,
     });
   };
 
-  const [vadidErrors, setvadidErrors] = useState({});
+  const [vadidErrors, setVadidErrors] = useState({});
 
-  function validate(formData) {
+  const validate = (formData) => {
     // check each field for validity
-    if (!formData.firstname) {
-      vadidErrors.firstname = "First name is required";
+    let errors = {};
+    for (let i of Object.values(formData)) {
+      if (typeof i === "string") {
+        if (validator.isEmpty(i)) {
+          errors.emptyError = "You must fill all form!";
+          return errors;
+        }
+      }
     }
-    if (!formData.lastname) {
-      vadidErrors.lastname = "Last name is required";
+    if (!validator.isStrongPassword(authData.password)) {
+      errors.passwordError = "Your password isn't strong enough!";
     }
-    if (!formData.phone || !validator.isMobilePhone(formData.phone)) {
-      vadidErrors.phone = "Please enter a valid phone number";
-    }
-    if (!formData.department) {
-      vadidErrors.department = "Department is required";
-    }
-    if (!formData.position) {
-      vadidErrors.position = "Position is required";
+    if (!validator.isEmail(authData.email)) {
+      errors.emailError = "Your email isn't valid";
     }
     if (
-      !formData.age ||
-      !validator.isInt(formData.age, { min: 18, max: 120 })
+      (!validator.isNumeric(formData.age) &&
+        Number.parseInt(formData.age) > 120) ||
+      Number.parseInt(formData.age) < 18
     ) {
-      vadidErrors.age = "Age must be between 18 and 120";
+      errors.ageError = "Your age isn't valid";
     }
-    if (!formData.country) {
-      vadidErrors.country = "Country is required";
-    }
-    if (!formData.img) {
-      vadidErrors.img = "Please upload an image";
-    }
-    vadidErrors;
-  }
+    return errors;
+  };
 
   const handleSubmit = (e) => {
+    console.log(formData);
     e.preventDefault();
-    const errors = validate(formData);
-    if (Object.keys(errors).length > 0) {
-      // handle errors
-    } else {
+    const vadidErrors = validate(formData);
+    if (Object.keys(vadidErrors).length === 0) {
       dispatch(addEmployee(formData));
       dispatch(register(authData));
       clear();
+    } else {
+      setVadidErrors(vadidErrors);
     }
   };
 
@@ -98,12 +95,21 @@ const AddEmployee = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  useEffect(() => {
+    setAuthData({
+      ...authData,
+      email: formData.firstname.concat(formData.lastname).concat("@gmail.com"),
+      password: formData.firstname.concat(formData.lastname),
+    });
+  }, [formData]);
+
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         setAvatar({ file, preview: reader.result });
+        setFormData({ ...formData, img: file });
       };
       reader.readAsDataURL(file);
     } else {
@@ -160,16 +166,22 @@ const AddEmployee = () => {
             name="email"
             type="email"
             Label="Email"
-            handleChange={handleChange}
-            value={formData.email}
+            handleChange={(e) =>
+              setAuthData({ ...authData, email: e.target.value })
+            }
+            value={authData.email}
+            error={vadidErrors.emailError}
             colStart="col-start-1"
           />
           <InputForm
             name="password"
             Label="Password"
             type="password"
-            handleChange={handleChange}
-            value={formData.name}
+            handleChange={(e) =>
+              setAuthData({ ...authData, password: e.target.value })
+            }
+            error={vadidErrors.passwordError}
+            value={authData.password}
           />
           <InputForm
             name="position"
@@ -190,9 +202,21 @@ const AddEmployee = () => {
             Label="Age"
             handleChange={handleChange}
             value={formData.age}
+            error={vadidErrors.ageError}
           />
-          <Button label="Lưu" className="" />
+          <InputForm
+            name="phone"
+            Label="Phone"
+            handleChange={handleChange}
+            value={formData.phone}
+          />
+          {Object.values(vadidErrors).map((error) => (
+            <ValidateError key={error} text={error} />
+          ))}
         </div>
+        <Button type="submit" primary className="mt-3 px-12">
+          Lưu
+        </Button>
       </form>
     </motion.div>
   );
