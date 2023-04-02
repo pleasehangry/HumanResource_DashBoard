@@ -1,15 +1,23 @@
-import { AUTH } from "../constants/employeeConstants";
+import { AUTH_FAIL, AUTH, START_LOADING } from "../constants/employeeConstants";
 import * as api from "../api/index";
 
 export const login = (formData, router) => async (dispatch) => {
   try {
+    dispatch({ type: START_LOADING });
     const { data } = await api.login(formData);
 
     dispatch({ type: AUTH, data });
 
-    router.push("/");
+    router("/");
   } catch (error) {
-    console.error(error);
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({
+      type: actionType.AUTH_FAIL,
+      payload: message,
+    });
   }
 };
 
@@ -19,8 +27,17 @@ export const register = (formData, router) => async (dispatch) => {
 
     dispatch({ type: AUTH, data });
 
-    router.push("/");
-  } catch (error) {}
+    router.push("/detail_infor");
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({
+      type: actionType.AUTH_FAIL,
+      payload: message,
+    });
+  }
 };
 
 export const logout = (formData, router) => async (dispatch) => {

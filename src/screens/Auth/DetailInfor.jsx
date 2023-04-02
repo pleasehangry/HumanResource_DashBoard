@@ -4,38 +4,17 @@ import { motion } from "framer-motion";
 import { AiOutlineUserAdd } from "react-icons/ai";
 
 import defaultAvatar from "../../assets/images/default_avatar.png";
-
-const InputForm = ({
-  value,
-  name,
-  colStart = "",
-  colSpan = "",
-  type = "text",
-  handleChange,
-  Label,
-}) => {
-  return (
-    <div className={`${colStart} ${colSpan}`}>
-      <label
-        htmlFor={name}
-        className="block mb-2 text-sm font-medium text-gray-600"
-      >
-        {Label}
-      </label>
-      <input
-        type={type}
-        id={name}
-        name={name}
-        value={value}
-        onChange={handleChange}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500"
-      />
-    </div>
-  );
-};
+import InputForm from "../Employee/InputForm";
 
 const DetailInfor = () => {
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.isLoading);
+
+  const [avatar, setAvatar] = useState({
+    file: null,
+    preview: defaultAvatar,
+  });
+
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -43,23 +22,58 @@ const DetailInfor = () => {
     department: "",
     position: "",
     age: "",
-    country: "",
-    img: "",
+    img: null,
   });
+  const clear = () => {
+    setFormData({
+      firstname: "",
+      lastname: "",
+      phone: "",
+      department: "",
+      position: "",
+      age: "",
+      img: null,
+    });
+  };
+
+  const [vadidErrors, setVadidErrors] = useState({});
+
+  const validate = (formData) => {
+    // check each field for validity
+    let errors = {};
+    for (let i of Object.values(formData)) {
+      if (typeof i === "string") {
+        if (validator.isEmpty(i)) {
+          errors.emptyError = "You must fill all form!";
+          return errors;
+        }
+      }
+    }
+    if (
+      (!validator.isNumeric(formData.age) &&
+        Number.parseInt(formData.age) > 120) ||
+      Number.parseInt(formData.age) < 18
+    ) {
+      errors.ageError = "Your age isn't valid";
+    }
+    return errors;
+  };
 
   const handleSubmit = (e) => {
+    console.log(formData);
     e.preventDefault();
-    // dispatch action to add employee to redux store
+    const vadidErrors = validate(formData);
+    if (Object.keys(vadidErrors).length === 0) {
+      dispatch(addEmployee(formData));
+      clear();
+    } else {
+      setVadidErrors(vadidErrors);
+    }
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  const [avatar, setAvatar] = useState({
-    file: null,
-    preview: defaultAvatar,
-  });
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -67,6 +81,7 @@ const DetailInfor = () => {
       const reader = new FileReader();
       reader.onload = () => {
         setAvatar({ file, preview: reader.result });
+        setFormData({ ...formData, img: file });
       };
       reader.readAsDataURL(file);
     } else {
@@ -81,7 +96,6 @@ const DetailInfor = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       className="p-6 m-4 bg-white rounded-md shadow-md"
     >
       <div className="flex items-center justify-between mb-4">
@@ -101,7 +115,7 @@ const DetailInfor = () => {
             <input
               type="file"
               id="avatar"
-              name="avatar"
+              name="img"
               accept="image/*"
               onChange={handleAvatarChange}
               className="hidden"
@@ -119,20 +133,6 @@ const DetailInfor = () => {
             Label="Last Name"
             handleChange={handleChange}
             value={formData.lastname}
-          />
-          <InputForm
-            name="email"
-            Label="Email"
-            handleChange={handleChange}
-            value={formData.name}
-            colStart="col-start-1"
-          />
-          <InputForm
-            name="password"
-            Label="Password"
-            type="password"
-            handleChange={handleChange}
-            value={formData.name}
           />
           <InputForm
             name="position"
@@ -153,21 +153,21 @@ const DetailInfor = () => {
             Label="Age"
             handleChange={handleChange}
             value={formData.age}
+            error={vadidErrors.ageError}
           />
-          <motion.button
-            className="p-3 border-none bg-purple-700 cursor-pointer text-white font-semibold rounded-md divide-y-2 mt-2"
-            type="submit"
-            whileHover={{
-              scale: 1.05,
-              opacity: 0.9,
-              boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.25)",
-              transition: { duration: 0.2 },
-            }}
-            onTap={{ scale: 0.9, transition: { duration: 0.3 } }}
-          >
-            Lưu
-          </motion.button>
+          <InputForm
+            name="phone"
+            Label="Phone"
+            handleChange={handleChange}
+            value={formData.phone}
+          />
+          {Object.values(vadidErrors).map((error) => (
+            <ValidateError key={error} text={error} />
+          ))}
         </div>
+        <Button type="submit" primary className="mt-3 px-12">
+          Lưu
+        </Button>
       </form>
     </motion.div>
   );

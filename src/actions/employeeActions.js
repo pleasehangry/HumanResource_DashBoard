@@ -80,11 +80,11 @@ export const fetchEmployees = (page) => async (dispatch) => {
     const numberOfPages = data / 10 + 1; // 10 is number of items per page
     const startIndex = (page - 1) * 10;
     const endIndex = startIndex + 10;
-    const paginatedData = employeesData.slice(startIndex, endIndex);
+    const paginatedData = data.slice(startIndex, endIndex);
 
     dispatch({
       type: actionType.EMPLOYEE_LIST_SUCCESS,
-      payload: [paginatedData, page, numberOfPages],
+      payload: { paginatedData, page, numberOfPages },
     });
   } catch (error) {
     const message =

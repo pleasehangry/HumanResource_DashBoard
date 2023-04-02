@@ -19,4 +19,6 @@ export const EMPLOYEE_ADD_FAIL = "EMPLOYEE_DELETE_FAIL";
 
 // AUTH
 export const AUTH = "AUTH";
+export const AUTH_FAIL = "AUTH";
+
 export const LOGOUT = "LOGOUT";

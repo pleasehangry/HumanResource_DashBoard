@@ -1,51 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import validator from "validator";
 
 import AnimationVideo from "../../assets/AnimationVideo.mp4";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../actions/authAction";
+import { useNavigate } from "react-router-dom";
+import { Button, Loader, ValidateError } from "../../components";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  const [errors, setErrors] = useState({});
+  const ServerErrors = useSelector((state) => state.authReducer.errors);
+  const isLoading = useSelector((state) => state.loading);
+
+  console.log(ServerErrors, isLoading);
+
+  const validationCheck = (email, password) => {
+    const errors = {};
+
+    if (email == "" || password == "") {
+      errors.emptyError = "You must fill email and password";
+      return errors;
+    }
+
+    if (!validator.isEmail(email)) {
+      errors.emailError = "Your email is not valid";
+    }
+
+    if (password.length < 8) {
+      errors.passwordError = "Your password is not valid";
+    }
+    return errors;
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!email || !password) {
-      // Set error state for empty fields
-      setEmailError(!email);
-      setPasswordError(!password);
-      return;
+    console.log("button clicked");
+    const errors = validationCheck(email, password);
+    console.log(Object.keys(errors).length);
+    if (Object.keys(errors).length === 0) {
+      console.log("Form submited");
+      dispatch(login({ email, password }, navigate));
+    } else {
+      setErrors(errors);
     }
-    // Check email and password validity here, using regular expressions or other methods
-    // If email or password is not valid, set error state for the corresponding field
-    // Example:
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailError(true);
-      return;
-    }
-    // Do the same for password validity, if needed
-    // If email and password are valid, proceed with login logic
-    // ...
-  };
-
-  const bgVariants = {
-    animate: {
-      x: ["-100%", "0%", "100%"],
-      transition: {
-        x: {
-          repeat: Infinity,
-          duration: 10,
-          ease: "linear",
-        },
-      },
-    },
   };
 
   return (
     <div className="relative h-screen w-screen grid grid-cols-2">
+      {isLoading && <Loader />}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <video autoPlay loop muted>
           <source src={AnimationVideo} type="video/mp4" />
@@ -59,16 +67,17 @@ const Login = () => {
           <p className="text-headingColor text-base">
             Welcome back! Please enter your details
           </p>
-          <form className="w-full" action="">
+          <form className="w-full" onSubmit={handleSubmit}>
             <label className="block mb-2">
               Email:
               <input
                 type="email"
                 value={email}
                 placeholder="Your Email..."
+                name="email"
                 onChange={(event) => setEmail(event.target.value)}
                 className={`w-full p-2 rounded outline-none border text-lg text-headingColor ${
-                  emailError ? "border-red-500" : "border-gray-300"
+                  errors.emailError ? "border-red-500" : "border-gray-300"
                 }`}
               />
             </label>
@@ -78,18 +87,19 @@ const Login = () => {
                 type="password"
                 placeholder="Your Password..."
                 value={password}
+                name="password"
                 onChange={(event) => setPassword(event.target.value)}
                 className={`w-full p-2 rounded outline-none border text-lg text-headingColor ${
-                  passwordError ? "border-red-500" : "border-gray-300"
+                  errors.passwordError ? "border-red-500" : "border-gray-300"
                 }`}
               />
             </label>
-            {emailError && (
+            {errors.emailError && (
               <div className="text-red-500 mb-2">
                 Please enter a valid email address
               </div>
             )}
-            {passwordError && (
+            {errors.passwordError && (
               <div className="text-red-500 mb-2">
                 Please enter a valid password
               </div>
@@ -109,12 +119,11 @@ const Login = () => {
                 Forgot your password?
               </a>
             </div>
-            <button
-              type="submit"
-              className="bg-purple-bg hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg w-full mt-4"
-            >
-              Log in
-            </button>
+            {errors.emptyError && <ValidateError text={errors.emptyError} />}
+            {ServerErrors && <ValidateError text={ServerErrors} />}
+            <Button type="submit" primary className="w-full mt-3">
+              Login
+            </Button>
             <button className="w-full text-center py-2 my-3 border flex space-x-2 items-center justify-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow transition duration-150">
               <img
                 src="https://www.svgrepo.com/show/355037/google.svg"

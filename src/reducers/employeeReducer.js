@@ -4,6 +4,7 @@ const initialState = {
   employees: [],
   currentPage: 1,
   numberOfPage: 1,
+  loading: false,
 };
 
 const employeeReducer = (state = initialState, action) => {
@@ -24,7 +25,7 @@ const employeeReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        employees: action.payload,
+        employees: action.payload.paginatedData,
         currentPage: action.payload.currentPage,
         numberOfPage: action.payload.numberOfPage,
       };

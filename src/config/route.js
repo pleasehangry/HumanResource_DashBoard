@@ -8,6 +8,7 @@ const routes = {
   task: "/task",
   login: "/login",
   register: "/register",
+  detailInfor: "/detail_infor",
 };
 
 export default routes;

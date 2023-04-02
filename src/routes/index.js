@@ -7,6 +7,7 @@ import {
   Login,
   Register,
   Employee,
+  DetailInfor,
 } from "../screens";
 
 const publicRoutes = [
@@ -16,6 +17,7 @@ const publicRoutes = [
   { path: routesConfig.profile, component: Employee },
   { path: routesConfig.login, component: Login, layout: null },
   { path: routesConfig.register, component: Register, layout: null },
+  { path: routesConfig.detailInfor, component: DetailInfor, layout: null },
 ];
 const privateRoutes = [];
 

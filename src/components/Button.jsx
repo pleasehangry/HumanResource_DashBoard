@@ -52,7 +52,7 @@ function Button({
   }
 
   return (
-    <Comp {...props}>
+    <Comp {...props} className="w-full">
       <motion.div
         className={classes}
         whileHover={{
