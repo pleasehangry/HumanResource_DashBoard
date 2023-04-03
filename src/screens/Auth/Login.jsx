@@ -135,7 +135,6 @@ const Login = () => {
           </form>
         </div>
       </div>
-      <motion.div className=""></motion.div>
     </div>
   );
 };

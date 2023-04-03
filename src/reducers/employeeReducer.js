@@ -26,8 +26,8 @@ const employeeReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         employees: action.payload.paginatedData,
-        currentPage: action.payload.currentPage,
-        numberOfPage: action.payload.numberOfPage,
+        currentPage: action.payload.page,
+        numberOfPage: action.payload.numberOfPages,
       };
     case actionType.EMPLOYEE_UPDATE_PROFILE_SUCCESS:
       return {
