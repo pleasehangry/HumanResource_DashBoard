@@ -106,7 +106,7 @@ export const deleteEmployee = (id) => async (dispatch) => {
 
     await api.deleteEmployee(id);
 
-    dispatch({ type: actionType.EMPLOYEE_DELETE_SUCCESS });
+    dispatch({ type: actionType.EMPLOYEE_DELETE_SUCCESS, payload: id });
   } catch (error) {
     const message =
       error.response && error.response.data.message

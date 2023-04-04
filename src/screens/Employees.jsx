@@ -11,7 +11,7 @@ import { textVariant, zoomIn } from "../utils/motion";
 
 import { EmployeeDeleteModal } from "./";
 import { deleteEmployee, fetchEmployees } from "../actions/employeeActions";
-import { Button } from "../components";
+import { Button, Loader } from "../components";
 
 const Employees = () => {
   const dispatch = useDispatch();
@@ -23,11 +23,13 @@ const Employees = () => {
   const employees = useSelector((state) => state.employeeReducer.employees);
   const error = useSelector((state) => state.employeeReducer.error);
   const currentPage = useSelector((state) => state.employeeReducer.currentPage);
+  const loading = useSelector((state) => state.employeeReducer.loading);
   const numberOfPages = useSelector(
     (state) => state.employeeReducer.numberOfPage
   );
 
-  console.log(employees, currentPage, numberOfPages, error);
+  // console.log(employees, currentPage, numberOfPages, error);
+  console.log("Rerender");
 
   // useEffect(() => {
   //   dispatch(fetchEmployees(currentPage));
@@ -49,6 +51,7 @@ const Employees = () => {
 
   return (
     <div className="container mx-auto px-4 sm:px-8 border border-slate-200 rounded-xl">
+      {loading && <Loader />}
       <div className="py-8">
         <div>
           <motion.h2
@@ -155,18 +158,20 @@ const Employees = () => {
                         </span>
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <Button
-                          className="mr-2 bg-yellow-500 rounded-md text-textColor shadow-md"
-                          onClick={() => handleEdit(employee.employee_code)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          className=" bg-red-300 rounded-md text-textColor shadow-md"
-                          onClick={() => handleDelete(employee.employee_code)}
-                        >
-                          Delete
-                        </Button>
+                        <div className="flex items-center justify-start">
+                          <Button
+                            className="mr-2 bg-yellow-500 rounded-md text-textColor shadow-md min-w-min"
+                            href={`/employees/${employee.employee_code}`}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            className=" bg-red-300 rounded-md text-textColor shadow-md"
+                            onClick={() => handleDelete(employee.employee_code)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </td>
                     </motion.tr>
                   ))}

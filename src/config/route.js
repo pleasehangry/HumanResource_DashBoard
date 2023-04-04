@@ -1,6 +1,6 @@
 const routes = {
   employees: "/employees",
-  profile: "/@:profile",
+  profile: "/employees/:username",
   add_employee: "/add_employee",
   edit_employee: "/edit_employee",
   attendance: "/attendance",

@@ -14,8 +14,6 @@ import { fetchEmployees } from "./actions/employeeActions";
 
 const store = createStore(reducers, compose(applyMiddleware(thunk)));
 
-store.dispatch(fetchEmployees(1));
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ContextProvider>

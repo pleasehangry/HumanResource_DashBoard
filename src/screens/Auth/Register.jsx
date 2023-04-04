@@ -2,30 +2,29 @@ import React, { useState } from "react";
 import { FlatTree, motion } from "framer-motion";
 import validator from "validator";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import AnimationVideo from "../../assets/AnimationVideo.mp4";
-import { ValidateError } from "../../components";
+import { Loader, ValidateError } from "../../components";
 import { register } from "../../actions/authAction";
 
 const Register = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("12345678");
-  const [confirmPassword, setConfirmPassword] = useState("12345678");
+  const [password, setPassword] = useState("H12345678");
+  const [password2, setPassword2] = useState("H12345678");
   const [errors, setErrors] = useState({});
+  const authReducer = useSelector((state) => state.authReducer);
+  const { authData, loading, serverErrors } = authReducer;
   const history = useNavigate();
 
-  const validate = (email, username, password, confirmPassword) => {
+  console.log(authReducer);
+
+  const validate = (email, username, password, password2) => {
     const errors = {};
 
-    if (
-      email == "" ||
-      username == "" ||
-      password == "" ||
-      confirmPassword == ""
-    ) {
+    if (email == "" || username == "" || password == "" || password2 == "") {
       errors.empty = "You must fill all forms";
       return errors;
     } else {
@@ -47,8 +46,8 @@ const Register = () => {
       }
 
       // Validate Confirm Password
-      if (password === confirmPassword) {
-        errors.confirmPassword = "Confirm password does not match password";
+      if (password === password2) {
+        errors.password2 = "Confirm password does not match password";
       }
     }
     return errors;
@@ -56,21 +55,18 @@ const Register = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const errors = validate(email, password, confirmPassword);
+    const errors = validate(email, password, password2);
     if (Object.keys(errors).length === 0) {
-      dispatch(
-        register(({ email, username, password, confirmPassword }, history))
-      );
-      console.log("Create user succeessfully");
+      dispatch(register({ email, username, password, password2 }, history));
     } else {
       setErrors({});
-      console.log(password, confirmPassword, password === confirmPassword);
       setErrors(errors);
     }
   };
 
   return (
     <div className="relative h-screen w-screen grid lg:grid-cols-2 grid-cols-1">
+      {loading && <Loader />}
       <div className="hidden absolute inset-0 -z-10 overflow-hidden md:block">
         <video autoPlay loop muted>
           <source src={AnimationVideo} type="video/mp4" />
@@ -139,19 +135,20 @@ const Register = () => {
                 type="password"
                 placeholder="Your Password..."
                 name="password2"
-                value={confirmPassword || ""}
-                onChange={(event) => setConfirmPassword(event.target.value)}
+                value={password2 || ""}
+                onChange={(event) => setPassword2(event.target.value)}
                 className={`w-full p-2 rounded outline-none border text-lg text-headingColor ${
-                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                  errors.password2 ? "border-red-500" : "border-gray-300"
                 }`}
               />
-              {errors.confirmPassword && (
+              {errors.password2 && (
                 <span className="text-base text-red-500">
-                  <ValidateError text={errors.confirmPassword} />
+                  <ValidateError text={errors.password2} />
                 </span>
               )}
               {errors.empty && <ValidateError text={errors.empty} />}
             </label>
+            {serverErrors && <ValidateError text={errors.empty} />}
             <button
               type="submit"
               className="bg-purple-bg hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg w-full mt-4"

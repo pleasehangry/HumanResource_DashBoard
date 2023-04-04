@@ -14,7 +14,13 @@ const employeeReducer = (state = initialState, action) => {
     case actionType.EMPLOYEE_DETAILS_SUCCESS:
       return { ...state, loading: false, employeeInfo: action.payload };
     case actionType.EMPLOYEE_DELETE_SUCCESS:
-      return { ...state, loading: false, success: true };
+      return {
+        ...state,
+        loading: false,
+        employees: employees.filter(
+          (employee) => employee.employee_code !== action.payload
+        ),
+      };
     case actionType.EMPLOYEE_ADD_SUCCESS:
       return {
         ...state,

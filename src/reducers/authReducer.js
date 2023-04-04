@@ -6,7 +6,7 @@ import {
 } from "../constants/employeeConstants";
 
 const authReducer = (
-  state = { authData: null, loading: false, errors: null },
+  state = { authData: null, loading: false, serverErrors: null },
   action
 ) => {
   switch (action.type) {
@@ -14,12 +14,17 @@ const authReducer = (
       return { ...state, loading: true };
     case AUTH:
       localStorage.setItem("profile", JSON.stringify({ ...action?.data }));
-      return { ...state, authData: action.data, loading: false, errors: null };
+      return {
+        ...state,
+        authData: action.data,
+        loading: false,
+        serverErrors: null,
+      };
     case AUTH_FAIL:
-      return { ...state, loading: false, errors: action.payload };
+      return { ...state, loading: false, serverErrors: action.payload };
     case LOGOUT:
       localStorage.clear();
-      return { ...state, authData: null, loading: false, errors: null };
+      return { ...state, authData: null, loading: false, serverErrors: null };
     default:
       return state;
   }

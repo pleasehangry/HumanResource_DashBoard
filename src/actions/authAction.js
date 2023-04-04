@@ -15,7 +15,7 @@ export const login = (formData, router) => async (dispatch) => {
         ? error.response.data.message
         : error.message;
     dispatch({
-      type: actionType.AUTH_FAIL,
+      type: AUTH_FAIL,
       payload: message,
     });
   }
@@ -27,14 +27,14 @@ export const register = (formData, router) => async (dispatch) => {
 
     dispatch({ type: AUTH, data });
 
-    router.push("/detail_infor");
+    router("/detail_infor");
   } catch (error) {
     const message =
       error.response && error.response.data.message
         ? error.response.data.message
         : error.message;
     dispatch({
-      type: actionType.AUTH_FAIL,
+      type: AUTH_FAIL,
       payload: message,
     });
   }

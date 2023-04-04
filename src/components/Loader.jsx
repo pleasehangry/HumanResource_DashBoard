@@ -18,12 +18,21 @@ const Loader = () => {
       }}
     >
       <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ ease: "linear", duration: 1, repeat: Infinity }}
+        animate={{
+          scale: [1, 2, 2, 1, 1],
+          rotate: [0, 0, 270, 270, 0],
+          borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+        }}
+        transition={{
+          duration: 2,
+          ease: "easeInOut",
+          times: [0, 0.2, 0.5, 0.8, 1],
+          repeat: Infinity,
+          repeatDelay: 1,
+        }}
         style={{
           width: 50,
           height: 50,
-          borderRadius: "50%",
           border: "5px solid white",
         }}
       />
