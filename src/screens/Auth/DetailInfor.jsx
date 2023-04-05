@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { AiOutlineUserAdd } from "react-icons/ai";
 
 import defaultAvatar from "../../assets/images/default_avatar.png";
 import InputForm from "../Employee/InputForm";
+import { Button, ValidateError } from "../../components";
 
 const DetailInfor = () => {
   const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.isLoading);
+  const employeeReducer = useSelector((state) => state.employeeReducer);
 
   const [avatar, setAvatar] = useState({
     file: null,
@@ -165,7 +166,7 @@ const DetailInfor = () => {
             <ValidateError key={error} text={error} />
           ))}
         </div>
-        <Button type="submit" primary className="mt-3 px-12">
+        <Button type="submit" primary className="mt-4 w-1/4">
           Lưu
         </Button>
       </form>

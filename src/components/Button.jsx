@@ -44,7 +44,6 @@ function Button({
       "text-sm": small,
       "text-lg": large,
       "rounded-full": rounded,
-      [className]: className,
     }
   );
   if (disabled) {
@@ -52,7 +51,7 @@ function Button({
   }
 
   return (
-    <Comp {...props}>
+    <Comp {...props} className={className}>
       <motion.div
         className={classes}
         whileHover={{

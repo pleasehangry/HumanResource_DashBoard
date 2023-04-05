@@ -148,7 +148,7 @@ const Register = () => {
               )}
               {errors.empty && <ValidateError text={errors.empty} />}
             </label>
-            {serverErrors && <ValidateError text={errors.empty} />}
+            {serverErrors && <ValidateError text={serverErrors} />}
             <button
               type="submit"
               className="bg-purple-bg hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg w-full mt-4"

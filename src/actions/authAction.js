@@ -24,15 +24,17 @@ export const login = (formData, router) => async (dispatch) => {
 export const register = (formData, router) => async (dispatch) => {
   try {
     const { data } = await api.register(formData);
+    console.log(data);
 
     dispatch({ type: AUTH, data });
 
     router("/detail_infor");
-  } catch (error) {
+  } catch (errors) {
     const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+      errors.response && errors.response.data
+        ? errors.response.data
+        : errors.message;
+    console.log(errors);
     dispatch({
       type: AUTH_FAIL,
       payload: message,

@@ -10,7 +10,6 @@ import { reducers } from "./reducers";
 import "./index.css";
 
 import { ContextProvider } from "./context/ContextProvider";
-import { fetchEmployees } from "./actions/employeeActions";
 
 const store = createStore(reducers, compose(applyMiddleware(thunk)));
 

@@ -4,21 +4,21 @@ const API = axios.create({
   baseURL: "http://127.0.0.1:8000",
   timeout: 5000,
   headers: {
-    "Content-Type": "application/json",
+    Accept: "application/json",
+    "Content-Type": "multipart/form-data",
   },
 });
 
 API.interceptors.request.use((req) => {
-  if (localStorage.getItem("profile")) {
-    req.headers.Authorization = `Token ${
-      JSON.parse(localStorage.getItem("profile")).token
-    }`;
+  let profile = localStorage.getItem("profile");
+  if (profile && profile.token) {
+    req.headers.Authorization = `Token ${JSON.parse(profile).token}`;
   }
   return req;
 });
 // AUTH
 export const login = (formdata) => API.post("/auth/login", formdata);
-export const register = (formdata) => API.post("/api/register", formdata);
+export const register = (formdata) => API.post("/api/register/", formdata);
 
 // USER
 export const fetchEmployee = (id) => API.get(`/staff/${id}`);
