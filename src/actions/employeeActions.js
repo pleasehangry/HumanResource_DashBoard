@@ -20,13 +20,13 @@ export const addEmployee = (formData) => async (dispatch) => {
   }
 };
 
-export const getEmployeeDetails = (id) => async (dispatch) => {
+export const getEmployeeDetails = (username) => async (dispatch) => {
   try {
     dispatch({
       type: actionType.START_LOADING,
     });
 
-    const { data } = await api.fetchEmployee(id);
+    const { data } = await api.fetchEmployee(username);
 
     dispatch({
       type: actionType.EMPLOYEE_DETAILS_SUCCESS,
@@ -65,6 +65,62 @@ export const updateEmployeeProfile = (id, employee) => async (dispatch) => {
         : error.message;
     dispatch({
       type: actionType.EMPLOYEE_UPDATE_PROFILE_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const fetchAttandance = (date) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actionType.START_LOADING,
+    });
+
+    const { data: AttData } = await api.fetchAttandance(date);
+    const { data: EmData } = await api.fetchEmployees();
+
+    console.log(AttData, EmData);
+
+    var data = [];
+    if (AttData && Array.isArray(AttData) && AttData.length > 0) {
+      console.log("Att true");
+      const mergedList = EmData.map((employee) => {
+        const employeeAttendance = AttData.find(
+          (a) => a.employee_code === employee.employee_code
+        );
+        return {
+          ...employee,
+          ...employeeAttendance,
+        };
+      });
+
+      const sortedList = mergedList.sort((a, b) => {
+        if (a.time_in && b.time_in) {
+          return b.time_in.localeCompare(a.time_in);
+        } else if (a.time_in) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      dispatch({
+        type: actionType.ATTANDANCE_LIST_SUCCESS,
+        payload: (data = [...sortedList]),
+      });
+    } else {
+      console.log("Att false");
+      dispatch({
+        type: actionType.ATTANDANCE_LIST_SUCCESS,
+        payload: (data = [...EmData]),
+      });
+    }
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({
+      type: actionType.ATTANDANCE_LIST_FAIL,
       payload: message,
     });
   }

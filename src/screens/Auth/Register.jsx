@@ -148,6 +148,12 @@ const Register = () => {
               )}
               {errors.empty && <ValidateError text={errors.empty} />}
             </label>
+            <p>
+              Đã có tài khoản?{" "}
+              <span>
+                <a href="/login">Đăng nhập</a>
+              </span>
+            </p>
             {serverErrors && <ValidateError text={serverErrors} />}
             <button
               type="submit"

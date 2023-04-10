@@ -8,53 +8,33 @@ import {
   AiOutlineSearch,
 } from "react-icons/ai";
 
-import DropdownFilter from "../components/DropdownFilter";
 import { textVariant, zoomIn } from "../utils/motion";
-import { fetchEmployees } from "../actions/employeeActions";
-
-const listEms = [
-  {
-    id: "1",
-    first_name: "Hoang",
-    last_name: "Hoang",
-    position: "CEO",
-    img: "https://th.bing.com/th?id=ORMS.2504fc7ad102f749b1f0cc03be698990&pid=Wdp&w=300&h=156&qlt=90&c=1&rs=1&dpr=1.5&p=0",
-  },
-  {
-    id: "2",
-    first_name: "Hoang",
-    last_name: "Hoang",
-    position: "CEO",
-    img: "https://th.bing.com/th?id=ORMS.2504fc7ad102f749b1f0cc03be698990&pid=Wdp&w=300&h=156&qlt=90&c=1&rs=1&dpr=1.5&p=0",
-  },
-  {
-    id: "3",
-    first_name: "Hoang",
-    last_name: "Hoang",
-    position: "CEO",
-    img: "https://th.bing.com/th?id=ORMS.2504fc7ad102f749b1f0cc03be698990&pid=Wdp&w=300&h=156&qlt=90&c=1&rs=1&dpr=1.5&p=0",
-  },
-];
+import { fetchAttandance } from "../actions/employeeActions";
+import { HOST_API } from "../constants/Api";
 
 const Attendance = () => {
   const dispatch = useDispatch();
-
   const today = new Date().toISOString().substr(0, 10);
 
   const [date, setDate] = useState(today);
 
   const [isListView, setIsListView] = useState(false);
 
-  const employees = useSelector((state) => state.employees) || listEms;
-  const currentPage = useSelector((state) => state.currentPage);
-  const numberOfPages = useSelector((state) => state.numberOfPages);
+  const employeeReducer = useSelector((state) => state.employeeReducer);
+  const { attendance } = employeeReducer;
 
   useEffect(() => {
-    dispatch(fetchEmployees());
-  }, [currentPage, numberOfPages, dispatch]);
+    console.log(employeeReducer);
+    const year = date.split("-")[0];
+    const month = date.split("-")[1];
+    const day = date.split("-")[2];
+    const dateParams = { day, month, year };
+    console.log(dateParams);
+    dispatch(fetchAttandance(dateParams));
+  }, [dispatch, date]);
 
-  const handlePageChange = (pageNumber) => {
-    dispatch(fetchEmployees(pageNumber));
+  const handleChangeDate = (e) => {
+    setDate(e.target.value);
   };
 
   return (
@@ -95,7 +75,8 @@ const Attendance = () => {
                 className="outline-none text-base font-light from-neutral-400 "
                 placeholder="halo"
                 type="date"
-                defaultValue={today}
+                value={date}
+                onChange={(e) => handleChangeDate(e)}
               />
             </div>
           </motion.div>
@@ -127,7 +108,7 @@ const Attendance = () => {
             </button>
           </motion.div>
         </div>
-        {employees.length > 0 ? (
+        {attendance?.length > 0 ? (
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             {isListView ? (
               <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
@@ -149,7 +130,7 @@ const Attendance = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {employees.map((employee, i) => (
+                    {attendance.map((employee, i) => (
                       <motion.tr
                         variants={zoomIn(i * 0.03, 0.5)}
                         initial="hidden"
@@ -160,12 +141,12 @@ const Attendance = () => {
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           <a
                             className="flex items-center"
-                            href={`/users/${employee.id}`}
+                            href={`/employees/${employee.employee_code}`}
                           >
                             <div className="flex-shrink-0 w-10 h-10">
                               <img
                                 className="w-full h-full rounded-full"
-                                src={employee.img}
+                                src={HOST_API.concat(employee.img)}
                                 alt=""
                               />
                             </div>
@@ -190,9 +171,15 @@ const Attendance = () => {
                           <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                             <span
                               aria-hidden
-                              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+                              className={`absolute inset-0 ${
+                                employee.time_in ? "bg-green-300" : "bg-red-300"
+                              } opacity-50 rounded-full`}
                             ></span>
-                            <span className="relative">Activo</span>
+                            <span className="relative">
+                              {employee.time_in
+                                ? `Check in at ${employee.time_in.slice(0, 5)}`
+                                : "Absent"}
+                            </span>
                           </span>
                         </td>
                       </motion.tr>
@@ -203,68 +190,40 @@ const Attendance = () => {
             ) : (
               <div className="container bg-white border rounded-md py-5 px-1">
                 <div className="grid grid-cols-4 gap-4">
-                  {employees.map((employee, i) => (
+                  {attendance.map((employee, i) => (
                     <motion.a
-                      href={`/users/${employee.id}`}
-                      key={employee.id}
+                      href={`/employees/${employee.employee_code}`}
+                      key={i}
                       variants={zoomIn(i * 0.05, 0.5)}
                       initial="hidden"
                       whileInView="show"
                       whileHover="whileHover"
                       className={`flex flex-col items-center ${
-                        false ? "bg-green-200" : "bg-red-200"
+                        employee.time_in ? "bg-green-200" : "bg-red-200"
                       } shadow-lg rounded-lg overflow-hidden`}
                     >
                       <img
-                        src={employee.img}
+                        src={HOST_API.concat(employee.img)}
                         className="w-32 h-32 object-cover rounded-full mt-5"
                       />
                       <div className="p-4">
                         <h2 className="text-lg font-semibold text-slate-800 text-center ">
                           {employee.last_name} {employee.first_name}
                         </h2>
-                        <p className="text-slate-800">{employee.position}</p>
-                        <p className="text-slate-800 text-center">Active</p>
+                        <p className="text-slate-800 text-center my-2">
+                          {employee.position}
+                        </p>
+                        <p className="text-slate-800 text-center">
+                          {employee.time_in
+                            ? `Check in at ${employee.time_in.slice(0, 5)}`
+                            : "Absent"}
+                        </p>
                       </div>
                     </motion.a>
                   ))}
                 </div>
               </div>
             )}
-            {/* pagination */}
-            <div className="mt-10">
-              <ul className="inline-flex justify-center w-full -space-x-px mx-auto">
-                <li>
-                  <button
-                    disabled={currentPage == 1}
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 ml-0 rounded-l-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    Prev
-                  </button>
-                </li>
-                {Array.from({ length: numberOfPages }).map((_, i) => (
-                  <li>
-                    <button
-                      key={i}
-                      onClick={() => handlePageChange(i + 1)}
-                      className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                    >
-                      {i + 1}
-                    </button>
-                  </li>
-                ))}
-                <li>
-                  <button
-                    disabled={currentPage === numberOfPages}
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    Next
-                  </button>
-                </li>
-              </ul>
-            </div>
           </div>
         ) : (
           <h3>Chưa có dữ liệu</h3>

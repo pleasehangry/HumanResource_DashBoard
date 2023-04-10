@@ -214,7 +214,7 @@ const AddEmployee = () => {
             <ValidateError key={error} text={error} />
           ))}
         </div>
-        <Button type="submit" primary className="mt-3 px-12">
+        <Button type="submit" primary className="mt-4 w-2/5">
           Lưu
         </Button>
       </form>

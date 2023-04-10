@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  AiOutlineOrderedList,
-  AiOutlinePicLeft,
-  AiOutlineSearch,
-} from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { AiOutlineSearch } from "react-icons/ai";
 
 import { textVariant, zoomIn } from "../utils/motion";
-
 import { EmployeeDeleteModal } from "./";
 import { deleteEmployee, fetchEmployees } from "../actions/employeeActions";
 import { Button, Loader } from "../components";
-import { useNavigate } from "react-router-dom";
+import { HOST_API } from "../constants/Api";
 
 const Employees = () => {
   const dispatch = useDispatch();
@@ -21,20 +17,18 @@ const Employees = () => {
   const [selectedId, setSelectedId] = useState(null);
 
   const employeeReducer = useSelector((state) => state.employeeReducer);
-  const { employees, currentPage, numberOfPages, loading, error } =
+  const { employees, currentPage, numberOfPage, loading, error } =
     employeeReducer;
 
   const userInfo = useSelector((state) => state.authReducer.authData);
 
   useEffect(() => {
     // if (userInfo && userInfo.isAdmin) {
-    dispatch(fetchEmployees(0));
+    dispatch(fetchEmployees(1));
     // } else {
     //   navigate("/login");
     // }
   }, [dispatch, navigate, userInfo]);
-
-  console.log(employeeReducer);
 
   const handlePageChange = (pageNumber) => {
     dispatch(fetchEmployees(pageNumber));
@@ -64,7 +58,7 @@ const Employees = () => {
             Quản lý nhân viên
           </motion.h2>
         </div>
-        <div className="my-2 flex sm:flex-row flex-col">
+        <div className="my-2 flex sm:flex-row flex-col justify-between items-center">
           <motion.div
             initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -85,6 +79,11 @@ const Employees = () => {
               </span>
             </div>
           </motion.div>
+          <div>
+            <Button to="/add_employee" className="w-full ml-auto" outline>
+              Thêm nhân viên
+            </Button>
+          </div>
         </div>
         {employees.length == 0 ? (
           <div>Chưa có nhân viên nào</div>
@@ -118,17 +117,17 @@ const Employees = () => {
                       initial="hidden"
                       whileInView="show"
                       whileHover="whileHover"
-                      key={employee.employee_code}
+                      key={i}
                     >
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <a
                           className="flex items-center"
-                          href={`/users/${employee.employee_code}`}
+                          href={`/employees/${employee.employee_code}`}
                         >
                           <div className="flex-shrink-0 w-10 h-10">
                             <img
                               className="w-full h-full rounded-full"
-                              src={employee.img}
+                              src={HOST_API.concat(employee.img)}
                               alt=""
                             />
                           </div>
@@ -189,7 +188,7 @@ const Employees = () => {
                     Prev
                   </button>
                 </li>
-                {Array.from({ length: numberOfPages }).map((_, i) => (
+                {Array.from({ length: numberOfPage }).map((_, i) => (
                   <li>
                     <button
                       key={i}
@@ -202,7 +201,7 @@ const Employees = () => {
                 ))}
                 <li>
                   <button
-                    disabled={currentPage === numberOfPages}
+                    disabled={currentPage === numberOfPage}
                     onClick={() => handlePageChange(currentPage + 1)}
                     className="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
@@ -214,7 +213,6 @@ const Employees = () => {
           </div>
         )}
       </div>
-
       <EmployeeDeleteModal
         isOpen={isModalOpen}
         employeeId={selectedId}

@@ -2,6 +2,8 @@ import * as actionType from "../constants/employeeConstants";
 
 const initialState = {
   employees: [],
+  attendance: [],
+  employeeInfo: null,
   currentPage: 1,
   numberOfPage: 1,
   loading: false,
@@ -35,6 +37,12 @@ const employeeReducer = (state = initialState, action) => {
         currentPage: action.payload.page,
         numberOfPage: action.payload.numberOfPages,
       };
+    case actionType.ATTANDANCE_LIST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        attendance: action.payload,
+      };
     case actionType.EMPLOYEE_UPDATE_PROFILE_SUCCESS:
       return {
         ...state,
@@ -47,6 +55,7 @@ const employeeReducer = (state = initialState, action) => {
     case actionType.EMPLOYEE_LIST_FAIL:
     case actionType.EMPLOYEE_DELETE_FAIL:
     case actionType.EMPLOYEE_UPDATE_PROFILE_FAIL:
+    case actionType.ATTANDANCE_LIST_FAIL:
     case actionType.EMPLOYEE_ADD_FAIL:
       return { ...state, loading: false, error: action.payload };
     default:

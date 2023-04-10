@@ -1,13 +1,31 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import { AiOutlineUserAdd } from "react-icons/ai";
-
-import defaultAvatar from "../../assets/images/default_avatar.png";
-import InputForm from "./InputForm";
 import { Button } from "../../components";
+import { useParams } from "react-router-dom";
+import { fetchEmployee } from "../../api";
 
 const Employee = () => {
+  const dispatch = useDispatch();
+  const { username } = useParams();
+  const profile = useSelector((state) => state.authReducer.authData);
+  const employeeInfo = useSelector(
+    (state) => state.employeeReducer.employeeInfo
+  );
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
+
+  useEffect(() => {
+    if (!employeeInfo) {
+      dispatch(fetchEmployee(username));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (profile?.username && profile?.username == username) {
+      setIsCurrentUser(true);
+    }
+  }, [username, profile?.username]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -17,9 +35,11 @@ const Employee = () => {
     >
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-3xl font-medium">Thông tin cá nhân</h2>
-        <Button primary to="#">
-          Sửa thông tin
-        </Button>
+        {isCurrentUser && (
+          <Button primary to="#">
+            Sửa thông tin
+          </Button>
+        )}
       </div>
       <motion.div className="w-full space-y-8 p-8 px-16 bg-white rounded-lg">
         <img
@@ -28,9 +48,11 @@ const Employee = () => {
           className="mx-auto object-cover w-32 h-32 rounded-full shadow-lg"
         />
         <div className="mt-2 mx-auto p-4 min-w-fit text-center">
-          <h2 className="font-semibold text-2xl">Quang Hoang</h2>
-          <p className="text-base text-textColor">CEO</p>
-          <p className="font-light text-sm">Huế, Việt Nam</p>
+          <h2 className="font-semibold text-2xl">
+            {employeeInfo.last_name} {employeeInfo.first_name}
+          </h2>
+          <p className="text-base text-textColor">{employeeInfo.position}</p>
+          <p className="font-light text-sm">Earth</p>
           <div className="flex items-center justify-center gap-4 mt-3">
             <Button outline>Contact</Button>
             <Button outline>Messagge</Button>
@@ -42,7 +64,9 @@ const Employee = () => {
             <ul className="mt-2 text-gray-700">
               <li className="flex border-y py-2">
                 <span className="font-bold w-24">Full name:</span>
-                <span className="text-gray-700">Amanda S. Ross</span>
+                <span className="text-gray-700">
+                  {employeeInfo.last_name} {employeeInfo.first_name}
+                </span>
               </li>
               <li className="flex border-b py-2">
                 <span className="font-bold w-24">Birthday:</span>
@@ -54,15 +78,15 @@ const Employee = () => {
               </li>
               <li className="flex border-b py-2">
                 <span className="font-bold w-24">Mobile:</span>
-                <span className="text-gray-700">(123) 123-1234</span>
+                <span className="text-gray-700">{employeeInfo.phone}</span>
               </li>
               <li className="flex border-b py-2">
                 <span className="font-bold w-24">Email:</span>
                 <span className="text-gray-700">amandaross@example.com</span>
               </li>
               <li className="flex border-b py-2">
-                <span className="font-bold w-24">Location:</span>
-                <span className="text-gray-700">New York, US</span>
+                <span className="font-bold w-24">Age:</span>
+                <span className="text-gray-700">{employeeInfo.age}</span>
               </li>
               <li className="flex border-b py-2">
                 <span className="font-bold w-24">Languages:</span>

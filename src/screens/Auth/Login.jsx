@@ -11,25 +11,22 @@ import { Button, Loader, ValidateError } from "../../components";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
-  const ServerErrors = useSelector((state) => state.authReducer.errors);
-  const isLoading = useSelector((state) => state.loading);
+  const authReducer = useSelector((state) => state.authReducer);
 
-  console.log(ServerErrors, isLoading);
+  const { authData, loading, serverErrors } = authReducer;
 
-  const validationCheck = (email, password) => {
+  console.log(authReducer);
+
+  const validationCheck = (username, password) => {
     const errors = {};
 
-    if (email == "" || password == "") {
-      errors.emptyError = "You must fill email and password";
+    if (username == "" || password == "") {
+      errors.emptyError = "You must fill username and password";
       return errors;
-    }
-
-    if (!validator.isEmail(email)) {
-      errors.emailError = "Your email is not valid";
     }
 
     if (password.length < 8) {
@@ -41,11 +38,10 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("button clicked");
-    const errors = validationCheck(email, password);
+    const errors = validationCheck(username, password);
     console.log(Object.keys(errors).length);
     if (Object.keys(errors).length === 0) {
-      console.log("Form submited");
-      dispatch(login({ email, password }, navigate));
+      dispatch(login({ username, password }, navigate));
     } else {
       setErrors(errors);
     }
@@ -53,7 +49,7 @@ const Login = () => {
 
   return (
     <div className="relative h-screen w-screen grid grid-cols-2">
-      {isLoading && <Loader />}
+      {loading && <Loader />}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <video autoPlay loop muted>
           <source src={AnimationVideo} type="video/mp4" />
@@ -69,15 +65,14 @@ const Login = () => {
           </p>
           <form className="w-full" onSubmit={handleSubmit}>
             <label className="block mb-2">
-              Email:
+              Username:
               <input
-                type="email"
-                value={email}
+                type="text"
+                value={username}
                 placeholder="Your Email..."
-                name="email"
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) => setUsername(event.target.value)}
                 className={`w-full p-2 rounded outline-none border text-lg text-headingColor ${
-                  errors.emailError ? "border-red-500" : "border-gray-300"
+                  errors.usernameError ? "border-red-500" : "border-gray-300"
                 }`}
               />
             </label>
@@ -87,16 +82,15 @@ const Login = () => {
                 type="password"
                 placeholder="Your Password..."
                 value={password}
-                name="password"
                 onChange={(event) => setPassword(event.target.value)}
                 className={`w-full p-2 rounded outline-none border text-lg text-headingColor ${
                   errors.passwordError ? "border-red-500" : "border-gray-300"
                 }`}
               />
             </label>
-            {errors.emailError && (
+            {errors.usernameError && (
               <div className="text-red-500 mb-2">
-                Please enter a valid email address
+                Please enter a valid username address
               </div>
             )}
             {errors.passwordError && (
@@ -119,8 +113,11 @@ const Login = () => {
                 Forgot your password?
               </a>
             </div>
+            <a className="text-sm block font-semibold mt-1" href="/register">
+              Sign Up
+            </a>
             {errors.emptyError && <ValidateError text={errors.emptyError} />}
-            {ServerErrors && <ValidateError text={ServerErrors} />}
+            {serverErrors && <ValidateError text={serverErrors} />}
             <Button type="submit" primary className="w-full mt-3">
               Login
             </Button>

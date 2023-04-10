@@ -32,7 +32,7 @@ function Button({
     Comp = "a";
   }
   const classes = classNames(
-    "px-4 py-2 font-semibold rounded-md shadow-sm text-white cursor-pointer overflow-hidden",
+    "px-4 py-2 font-semibold rounded-md shadow-sm text-black cursor-pointer overflow-hidden",
     {
       "bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2":
         primary,
