@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
+import axios from "axios";
+
 import { Button } from "../../components";
 import { useParams } from "react-router-dom";
 import { fetchEmployee } from "../../api";
+import { HOST_API } from "../../constants/Api";
 
 const Employee = () => {
-  const dispatch = useDispatch();
   const { username } = useParams();
   const profile = useSelector((state) => state.authReducer.authData);
-  const employeeInfo = useSelector(
-    (state) => state.employeeReducer.employeeInfo
-  );
   const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [employeeData, setEmployeeData] = useState(false);
 
   useEffect(() => {
-    if (!employeeInfo) {
-      dispatch(fetchEmployee(username));
-    }
-  }, [dispatch]);
+    axios
+      .get(`${HOST_API}/staff/detail/${username}`)
+      .then((response) => {
+        setEmployeeData(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [username]);
 
   useEffect(() => {
     if (profile?.username && profile?.username == username) {
@@ -43,19 +48,19 @@ const Employee = () => {
       </div>
       <motion.div className="w-full space-y-8 p-8 px-16 bg-white rounded-lg">
         <img
-          src="https://avatars.githubusercontent.com/u/81598637?s=40&v=4"
+          src={HOST_API.concat(employeeData.img)}
           alt="Avatar"
           className="mx-auto object-cover w-32 h-32 rounded-full shadow-lg"
         />
         <div className="mt-2 mx-auto p-4 min-w-fit text-center">
           <h2 className="font-semibold text-2xl">
-            {employeeInfo.last_name} {employeeInfo.first_name}
+            {employeeData.last_name} {employeeData.first_name}
           </h2>
-          <p className="text-base text-textColor">{employeeInfo.position}</p>
+          <p className="text-base text-textColor">{employeeData.position}</p>
           <p className="font-light text-sm">Earth</p>
           <div className="flex items-center justify-center gap-4 mt-3">
-            <Button outline>Contact</Button>
-            <Button outline>Messagge</Button>
+            <Button primary>Contact</Button>
+            <Button primary>Messagge</Button>
           </div>
         </div>
         <div className="w-full flex flex-col 2xl:w-1/3">
@@ -65,7 +70,7 @@ const Employee = () => {
               <li className="flex border-y py-2">
                 <span className="font-bold w-24">Full name:</span>
                 <span className="text-gray-700">
-                  {employeeInfo.last_name} {employeeInfo.first_name}
+                  {employeeData.last_name} {employeeData.first_name}
                 </span>
               </li>
               <li className="flex border-b py-2">
@@ -78,7 +83,7 @@ const Employee = () => {
               </li>
               <li className="flex border-b py-2">
                 <span className="font-bold w-24">Mobile:</span>
-                <span className="text-gray-700">{employeeInfo.phone}</span>
+                <span className="text-gray-700">{employeeData.phone}</span>
               </li>
               <li className="flex border-b py-2">
                 <span className="font-bold w-24">Email:</span>
@@ -86,7 +91,7 @@ const Employee = () => {
               </li>
               <li className="flex border-b py-2">
                 <span className="font-bold w-24">Age:</span>
-                <span className="text-gray-700">{employeeInfo.age}</span>
+                <span className="text-gray-700">{employeeData.age}</span>
               </li>
               <li className="flex border-b py-2">
                 <span className="font-bold w-24">Languages:</span>

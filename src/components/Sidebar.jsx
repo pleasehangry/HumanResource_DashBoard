@@ -9,6 +9,7 @@ import {
   AiFillShop,
   AiOutlineDoubleLeft,
   AiOutlineGroup,
+  AiOutlineLogout,
 } from "react-icons/ai";
 import { staggerContainer } from "../utils/motion";
 
@@ -102,6 +103,19 @@ const Sidebar = () => {
               </motion.div>
             ))}
           </motion.div>
+          <div className="mt-auto">
+            <NavLink
+              to="/logout"
+              style={({ isActive }) => ({
+                backgroundColor: isActive ? "#ccc" : "",
+              })}
+              onClick={handleCloseSidebar}
+              className={({ isActive }) => (isActive ? activeLink : normalLink)}
+            >
+              <AiOutlineLogout />
+              <span className="capitalize">Log out</span>
+            </NavLink>
+          </div>
         </>
       )}
     </motion.div>

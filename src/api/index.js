@@ -18,12 +18,12 @@ API.interceptors.request.use((req) => {
   return req;
 });
 // AUTH
-export const login = (formdata) => API.post("/api/login", formdata);
+export const login = (formdata) => API.post("/api/login/", formdata);
 export const register = (formdata) => API.post("/api/register/", formdata);
 
 // USER
 export const fetchEmployee = (username) => API.get(`/staff/detail/${username}`);
-export const addEmployee = (formdata) => API.post(`/employee/add`, formdata);
+export const addEmployee = (formdata) => API.post(`/employee/add/`, formdata);
 export const fetchEmployees = () => API.get(`/staff/list`);
 export const fetchAttandance = (date) =>
   API.get(

@@ -80,7 +80,7 @@ const Employees = () => {
             </div>
           </motion.div>
           <div>
-            <Button to="/add_employee" className="w-full ml-auto" outline>
+            <Button to="/add_employee" className="w-full ml-auto" primary>
               Thêm nhân viên
             </Button>
           </div>
