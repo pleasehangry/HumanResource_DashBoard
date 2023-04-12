@@ -13,12 +13,13 @@ import {
 } from "react-icons/ai";
 import { staggerContainer } from "../utils/motion";
 import Button from "./Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions/authAction";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const authData = useSelector((state) => state.authReducer.authData);
   const { activeMenu, setActiveMenu, screenSize } = useStateContext();
   const handleCloseSidebar = () => {
     if (activeMenu && screenSize <= 900) {
