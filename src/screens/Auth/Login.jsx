@@ -19,7 +19,11 @@ const Login = () => {
 
   const { authData, loading, serverErrors } = authReducer;
 
-  console.log(authReducer);
+  useEffect(() => {
+    if (authData != null) {
+      navigate("/");
+    }
+  }, [dispatch, authData]);
 
   const validationCheck = (username, password) => {
     const errors = {};

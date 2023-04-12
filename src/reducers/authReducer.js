@@ -5,10 +5,13 @@ import {
   START_LOADING,
 } from "../constants/employeeConstants";
 
-const authReducer = (
-  state = { authData: null, loading: false, serverErrors: null },
-  action
-) => {
+const initialState = {
+  authData: JSON.parse(localStorage.getItem("profile")) || null,
+  loading: false,
+  serverErrors: null,
+};
+
+const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case START_LOADING:
       return { ...state, loading: true };

@@ -13,6 +13,7 @@ import {
 import { UserProfile } from "./";
 import { useStateContext } from "../context/ContextProvider";
 import { fadeIn } from "../utils/motion";
+import { useSelector } from "react-redux";
 
 const NavButton = ({ title, customFunc, icon, dotColor }) => (
   <button
@@ -29,6 +30,10 @@ const NavButton = ({ title, customFunc, icon, dotColor }) => (
 );
 
 const Navbar = () => {
+  const employeeInfo = useSelector(
+    (state) => state.employeeReducer.employeeInfo
+  );
+
   const {
     activeMenu,
     setActiveMenu,
@@ -47,6 +52,7 @@ const Navbar = () => {
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   useEffect(() => {
     if (screenSize <= 900) {
       setActiveMenu(false);
@@ -66,48 +72,51 @@ const Navbar = () => {
         customFunc={() => setActiveMenu((prevActiveMenu) => !prevActiveMenu)}
         icon={<AiOutlineMenu />}
       ></NavButton>
-      <div className="flex">
-        <NavButton
-          title="Chat"
-          dotColor="#03C9D7"
-          customFunc={() => {
-            handleClick("chat");
-          }}
-          icon={<AiOutlineWechat />}
-        />
-        <NavButton
-          title="Notification"
-          dotColor="#03C9D7"
-          customFunc={() => {
-            handleClick("notification");
-          }}
-          icon={<AiOutlineNotification />}
-        />
-        <div>
-          <div
-            className="flex items-center gap-2 cursor-pointer p-1
+
+      {employeeInfo && (
+        <div className="flex">
+          <NavButton
+            title="Chat"
+            dotColor="#03C9D7"
+            customFunc={() => {
+              handleClick("chat");
+            }}
+            icon={<AiOutlineWechat />}
+          />
+          <NavButton
+            title="Notification"
+            dotColor="#03C9D7"
+            customFunc={() => {
+              handleClick("notification");
+            }}
+            icon={<AiOutlineNotification />}
+          />
+          <div>
+            <div
+              className="flex items-center gap-2 cursor-pointer p-1
           hover:bg-light-gray rounded-lg"
-            onClick={() => handleClick("userProfile")}
-          >
-            <img
-              className="rounded-full w-8 h-8"
-              src="https://avatars.githubusercontent.com/u/81598637?s=40&v=4"
-              alt="Avatar"
-            ></img>
-            <p>
-              <span className="text-gray-400 text-14">Hi, </span>{" "}
-              <span className="text-gray-400 text-14 font-bold ml-1">
-                Quang Hoang
-              </span>
-            </p>
-            <AiOutlineArrowDown className="text-gray-400 text-14" />
+              onClick={() => handleClick("userProfile")}
+            >
+              <img
+                className="rounded-full w-8 h-8"
+                src="https://avatars.githubusercontent.com/u/81598637?s=40&v=4"
+                alt="Avatar"
+              ></img>
+              <p>
+                <span className="text-gray-400 text-14">Hi, </span>{" "}
+                <span className="text-gray-400 text-14 font-bold ml-1">
+                  {employeeInfo.firt_name}
+                </span>
+              </p>
+              <AiOutlineArrowDown className="text-gray-400 text-14" />
+            </div>
           </div>
-        </div>
-        {/* {isClicked.cart && <Cart />}
+          {/* {isClicked.cart && <Cart />}
         {isClicked.chat && <Chat />}
         {isClicked.notification && <Notification />} */}
-        {isClicked.userProfile && <UserProfile />}
-      </div>
+          {isClicked.userProfile && <UserProfile />}
+        </div>
+      )}
     </motion.div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import { motion, sync } from "framer-motion";
 
@@ -12,13 +12,22 @@ import {
   AiOutlineLogout,
 } from "react-icons/ai";
 import { staggerContainer } from "../utils/motion";
+import Button from "./Button";
+import { useDispatch } from "react-redux";
+import { logout } from "../actions/authAction";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { activeMenu, setActiveMenu, screenSize } = useStateContext();
   const handleCloseSidebar = () => {
     if (activeMenu && screenSize <= 900) {
       setActiveMenu(false);
     }
+  };
+
+  const handleLogout = () => {
+    dispatch(logout(navigate));
   };
 
   const menuVariant = {
@@ -38,7 +47,7 @@ const Sidebar = () => {
   const activeLink =
     "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white text-md m-2";
   const normalLink =
-    "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2";
+    "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-gray-200 m-2";
 
   return (
     <motion.div
@@ -103,18 +112,11 @@ const Sidebar = () => {
               </motion.div>
             ))}
           </motion.div>
-          <div className="mt-auto">
-            <NavLink
-              to="/logout"
-              style={({ isActive }) => ({
-                backgroundColor: isActive ? "#ccc" : "",
-              })}
-              onClick={handleCloseSidebar}
-              className={({ isActive }) => (isActive ? activeLink : normalLink)}
-            >
+          <div className="mt-auto cursor-pointer">
+            <div onClick={handleLogout} className={normalLink}>
               <AiOutlineLogout />
               <span className="capitalize">Log out</span>
-            </NavLink>
+            </div>
           </div>
         </>
       )}

@@ -1,17 +1,19 @@
 import * as api from "../api/index";
 import * as actionType from "../constants/employeeConstants";
 
-export const addEmployee = (formData) => async (dispatch) => {
+export const addEmployee = (formData, formAuth) => async (dispatch) => {
   try {
     dispatch({ typeof: actionType.START_LOADING });
-
-    const newEmployee = await api.addEmployee(formData);
+    const { data: authData } = await api.register(formAuth);
+    const { data: employeeData } = await api.addEmployee(formData);
 
     dispatch({ type: actionType.EMPLOYEE_ADD_SUCCESS, payload: newEmployee });
+    alert("Thêm nhân viên thành công");
+    navigate("/employees");
   } catch (error) {
     const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
+      error.response && error.response.data
+        ? error.response.data
         : error.message;
     dispatch({
       type: actionType.EMPLOYEE_ADD_FAIL,
@@ -79,11 +81,8 @@ export const fetchAttandance = (date) => async (dispatch) => {
     const { data: AttData } = await api.fetchAttandance(date);
     const { data: EmData } = await api.fetchEmployees();
 
-    console.log(AttData, EmData);
-
     var data = [];
     if (AttData && Array.isArray(AttData) && AttData.length > 0) {
-      console.log("Att true");
       const mergedList = EmData.map((employee) => {
         const employeeAttendance = AttData.find(
           (a) => a.employee_code === employee.employee_code
@@ -108,7 +107,6 @@ export const fetchAttandance = (date) => async (dispatch) => {
         payload: (data = [...sortedList]),
       });
     } else {
-      console.log("Att false");
       dispatch({
         type: actionType.ATTANDANCE_LIST_SUCCESS,
         payload: (data = [...EmData]),
@@ -144,8 +142,8 @@ export const fetchEmployees = (page) => async (dispatch) => {
     });
   } catch (error) {
     const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
+      error.response && error.response.data
+        ? error.response.data
         : error.message;
     dispatch({
       type: actionType.EMPLOYEE_LIST_FAIL,
@@ -164,9 +162,10 @@ export const deleteEmployee = (id) => async (dispatch) => {
 
     dispatch({ type: actionType.EMPLOYEE_DELETE_SUCCESS, payload: id });
   } catch (error) {
+    console.log(error);
     const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
+      error.response && error.response.data
+        ? error.response.data
         : error.message;
     dispatch({
       type: actionType.EMPLOYEE_DELETE_FAIL,

@@ -19,7 +19,7 @@ const employeeReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        employees: employees.filter(
+        employees: state.employees.filter(
           (employee) => employee.employee_code !== action.payload
         ),
       };

@@ -5,4 +5,5 @@ export { default as DetailInfor } from "./Auth/DetailInfor";
 export { default as Employees } from "./Employees";
 export { default as Employee } from "./Employee/Employee";
 export { default as AddEmployees } from "./Employee/Add";
+export { default as EditEmployee } from "./Employee/Edit";
 export { default as EmployeeDeleteModal } from "./Employee/EmployeeDeleteModal";

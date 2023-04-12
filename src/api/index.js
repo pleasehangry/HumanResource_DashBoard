@@ -12,7 +12,7 @@ const API = axios.create({
 
 API.interceptors.request.use((req) => {
   let profile = localStorage.getItem("profile");
-  if (profile && profile.token) {
+  if (profile) {
     req.headers.Authorization = `Token ${JSON.parse(profile).token}`;
   }
   return req;
@@ -22,7 +22,8 @@ export const login = (formdata) => API.post("/api/login/", formdata);
 export const register = (formdata) => API.post("/api/register/", formdata);
 
 // USER
-export const fetchEmployee = (username) => API.get(`/staff/detail/${username}`);
+export const fetchEmployee = (userId) =>
+  API.get(`/staff/detail/user/${userId}`);
 export const addEmployee = (formdata) => API.post(`/employee/add/`, formdata);
 export const fetchEmployees = () => API.get(`/staff/list`);
 export const fetchAttandance = (date) =>
@@ -33,4 +34,4 @@ export const fetchAttandance = (date) =>
   );
 export const updateEmployee = (id, updatedUser) =>
   API.put(`/employee/${id}`, updatedUser);
-export const deleteEmployee = (id) => API.delete(`/employee/${id}`);
+export const deleteEmployee = (id) => API.delete(`/staff/detail/${id}/delete`);

@@ -13,35 +13,39 @@ import { HOST_API } from "../constants/Api";
 const Employees = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
   const employeeReducer = useSelector((state) => state.employeeReducer);
-  const { employees, currentPage, numberOfPage, loading, error } =
-    employeeReducer;
+  const { employees, currentPage, numberOfPage, loading } = employeeReducer;
+
+  const [employeesState, setEmployeesState] = useState(employees);
 
   const userInfo = useSelector((state) => state.authReducer.authData);
 
   useEffect(() => {
-    // if (userInfo && userInfo.isAdmin) {
-    dispatch(fetchEmployees(1));
-    // } else {
-    //   navigate("/login");
-    // }
-  }, [dispatch, navigate, userInfo]);
+    console.log(userInfo);
+    if (userInfo?.id == 1) {
+      dispatch(fetchEmployees(currentPage));
+    } else {
+      alert("Bạn chưa đăng nhập");
+      navigate("/login");
+    }
+  }, [dispatch, employeesState]);
 
   const handlePageChange = (pageNumber) => {
     dispatch(fetchEmployees(pageNumber));
   };
-  const handleEdit = (id) => {};
   const handleDelete = (id) => {
     setSelectedId(id);
     setIsModalOpen(true);
-    console.log(selectedId);
   };
 
-  const handleConfirm = (id) => {
-    dispatch(deleteEmployee(id));
+  const handleConfirm = () => {
+    console.log("Deleting...", selectedId);
+    dispatch(deleteEmployee(selectedId));
+    setIsModalOpen(false);
   };
 
   return (
@@ -160,7 +164,7 @@ const Employees = () => {
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <Button
                           className="mr-2 bg-yellow-500 rounded-md text-textColor shadow-md"
-                          onClick={() => handleEdit(employee.employee_code)}
+                          href={`/employees/${employee.employee_code}/edit`}
                         >
                           Edit
                         </Button>

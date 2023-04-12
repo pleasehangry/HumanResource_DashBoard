@@ -10,10 +10,12 @@ import { ValidateError } from "../../components";
 import { Button } from "../../components";
 import { addEmployee } from "../../actions/employeeActions";
 import { register } from "../../actions/authAction";
+import { useNavigate } from "react-router-dom";
 
 const AddEmployee = () => {
   const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.isLoading);
+  const navigate = useNavigate();
+  const isLoading = useSelector((state) => state.employeeReducer.loading);
 
   const [avatar, setAvatar] = useState({
     file: null,
@@ -84,7 +86,7 @@ const AddEmployee = () => {
     const vadidErrors = validate(formData);
     if (Object.keys(vadidErrors).length === 0) {
       dispatch(addEmployee(formData));
-      dispatch(register(authData));
+      dispatch(register(authData, navigate));
       clear();
     } else {
       setVadidErrors(vadidErrors);
@@ -214,9 +216,11 @@ const AddEmployee = () => {
             <ValidateError key={error} text={error} />
           ))}
         </div>
-        <Button type="submit" primary className="mt-4 w-2/5">
-          Lưu
-        </Button>
+        <div className="w-full flex items-center justify-center">
+          <Button type="submit" primary className="mt-4 w-2/5">
+            Lưu
+          </Button>
+        </div>
       </form>
     </motion.div>
   );
