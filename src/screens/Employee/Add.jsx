@@ -56,9 +56,12 @@ const AddEmployee = () => {
   const validate = (formData) => {
     // check each field for validity
     let errors = {};
+    if (formData.img === null) {
+      errors.imgError = "Bạn chưa thêm ảnh";
+    }
     for (let i of Object.values(formData)) {
       if (typeof i === "string") {
-        if (validator.isEmpty(i)) {
+        if (i === "") {
           errors.emptyError = "You must fill all form!";
           return errors;
         }

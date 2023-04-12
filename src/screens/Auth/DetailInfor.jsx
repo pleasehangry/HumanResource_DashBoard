@@ -1,15 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
+import validator from "validator";
 import { AiOutlineUserAdd } from "react-icons/ai";
 
 import defaultAvatar from "../../assets/images/default_avatar.png";
 import InputForm from "../Employee/InputForm";
 import { Button, ValidateError } from "../../components";
+import { addEmployeeInfo } from "../../actions/employeeActions";
+import { useNavigate } from "react-router-dom";
 
 const DetailInfor = () => {
   const dispatch = useDispatch();
   const employeeReducer = useSelector((state) => state.employeeReducer);
+  const { error } = employeeReducer;
+  const navigate = useNavigate();
 
   const [avatar, setAvatar] = useState({
     file: null,
@@ -17,8 +22,9 @@ const DetailInfor = () => {
   });
 
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
+    employee_code: "",
+    first_name: "",
+    last_name: "",
     phone: "",
     department: "",
     position: "",
@@ -27,8 +33,9 @@ const DetailInfor = () => {
   });
   const clear = () => {
     setFormData({
-      firstname: "",
-      lastname: "",
+      employee_code: "",
+      first_name: "",
+      last_name: "",
       phone: "",
       department: "",
       position: "",
@@ -39,17 +46,16 @@ const DetailInfor = () => {
 
   const [vadidErrors, setVadidErrors] = useState({});
 
+  useEffect(() => {
+    if (error) {
+      vadidErrors.serverError = error;
+      setVadidErrors(vadidErrors);
+    }
+  }, [dispatch, vadidErrors]);
+
   const validate = (formData) => {
     // check each field for validity
     let errors = {};
-    for (let i of Object.values(formData)) {
-      if (typeof i === "string") {
-        if (validator.isEmpty(i)) {
-          errors.emptyError = "You must fill all form!";
-          return errors;
-        }
-      }
-    }
     if (
       (!validator.isNumeric(formData.age) &&
         Number.parseInt(formData.age) > 120) ||
@@ -65,8 +71,7 @@ const DetailInfor = () => {
     e.preventDefault();
     const vadidErrors = validate(formData);
     if (Object.keys(vadidErrors).length === 0) {
-      dispatch(addEmployee(formData));
-      clear();
+      dispatch(addEmployeeInfo(formData));
     } else {
       setVadidErrors(vadidErrors);
     }
@@ -123,17 +128,23 @@ const DetailInfor = () => {
             />
           </div>
           <InputForm
-            name="firstname"
-            Label="First Name"
+            name="employee_code"
+            Label="Employee ID"
             handleChange={handleChange}
-            value={formData.firstname}
+            value={formData.employee_code}
             colStart="col-start-1"
           />
           <InputForm
-            name="lastname"
+            name="first_name"
+            Label="First Name"
+            handleChange={handleChange}
+            value={formData.first_name}
+          />
+          <InputForm
+            name="last_name"
             Label="Last Name"
             handleChange={handleChange}
-            value={formData.lastname}
+            value={formData.last_name}
           />
           <InputForm
             name="position"

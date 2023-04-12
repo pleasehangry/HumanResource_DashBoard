@@ -1,16 +1,53 @@
+import axios from "axios";
 import * as api from "../api/index";
 import * as actionType from "../constants/employeeConstants";
+import { HOST_API } from "../constants/Api";
 
 export const addEmployee = (formData, formAuth) => async (dispatch) => {
   try {
     dispatch({ typeof: actionType.START_LOADING });
     const { data: authData } = await api.register(formAuth);
-    const { data: employeeData } = await api.addEmployee(formData);
+
+    const config = {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+        Authorization: "Token ".concat(authData.token),
+      },
+    };
+
+    const { data: newEmployee } = await axios.post(
+      HOST_API.concat("/staff/create"),
+      formData,
+      config
+    );
 
     dispatch({ type: actionType.EMPLOYEE_ADD_SUCCESS, payload: newEmployee });
     alert("Thêm nhân viên thành công");
     navigate("/employees");
   } catch (error) {
+    const message =
+      error.response && error.response.data
+        ? error.response.data
+        : error.message;
+    dispatch({
+      type: actionType.EMPLOYEE_ADD_FAIL,
+      payload: message,
+    });
+  }
+};
+export const addEmployeeInfo = (formData) => async (dispatch) => {
+  try {
+    dispatch({ type: actionType.START_LOADING });
+
+    console.log("----");
+    console.log(formData);
+    const { data: employeeData } = await api.addEmployee(formData);
+
+    dispatch({ type: actionType.EMPLOYEE_ADD_SUCCESS, payload: employeeData });
+    alert("Thêm nhân viên thành công");
+  } catch (error) {
+    console.log(error);
     const message =
       error.response && error.response.data
         ? error.response.data
