@@ -3,7 +3,6 @@ const routes = {
   profile: "/employees/:username",
   profile_edit: "/employees/:username/edit",
   add_employee: "/add_employee",
-  edit_employee: "/edit_employee",
   attendance: "/",
   chat: "/chat",
   task: "/task",

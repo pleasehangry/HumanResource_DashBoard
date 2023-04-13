@@ -19,7 +19,7 @@ const publicRoutes = [
   { path: routesConfig.detailInfor, component: DetailInfor, layout: null },
 ];
 const privateRoutes = [
-  { path: routesConfig.edit_employee, component: EditEmployee },
+  { path: routesConfig.profile_edit, component: EditEmployee },
   { path: routesConfig.employees, component: Employees },
   { path: routesConfig.add_employee, component: AddEmployees },
 ];

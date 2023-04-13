@@ -8,7 +8,7 @@ import NotFound from "./screens/NotFound";
 
 function App() {
   const authData = useSelector((state) => state.authReducer.authData);
-  const [authenticated, setAuthenticated] = useState(authData.id === 1);
+  const [authenticated, setAuthenticated] = useState(authData?.id === 1);
   console.log(authenticated);
   return (
     <BrowserRouter>
