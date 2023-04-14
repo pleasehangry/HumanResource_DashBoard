@@ -11,17 +11,27 @@ import {
 import { textVariant, zoomIn } from "../utils/motion";
 import { fetchAttandance } from "../actions/employeeActions";
 import { HOST_API } from "../constants/Api";
+import LineChart from "../components/LineChart";
+
+const data = {
+  January: 100,
+  February: 120,
+  March: 140,
+  April: 160,
+  May: 180,
+  June: 200,
+};
 
 const Attendance = () => {
   const dispatch = useDispatch();
   const today = new Date().toISOString().substr(0, 10);
 
   const [date, setDate] = useState(today);
-
   const [isListView, setIsListView] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState("");
   const employeeReducer = useSelector((state) => state.employeeReducer);
   const { attendance } = employeeReducer;
+  const [attendanceData, setAttendanceData] = useState(attendance);
 
   useEffect(() => {
     console.log(employeeReducer);
@@ -32,6 +42,20 @@ const Attendance = () => {
     console.log(dateParams);
     dispatch(fetchAttandance(dateParams));
   }, [dispatch, date]);
+
+  useEffect(() => {
+    if (searchTerm !== "") {
+      const filterData = attendanceData.filter((att) => {
+        return (
+          att.first_name.includes(searchTerm) ||
+          att.last_name.includes(searchTerm)
+        );
+      });
+      setAttendanceData(filterData);
+    } else {
+      setAttendanceData(attendance);
+    }
+  }, [searchTerm]);
 
   const handleChangeDate = (e) => {
     setDate(e.target.value);
@@ -64,6 +88,8 @@ const Attendance = () => {
             <div className="flex items-center justify-center border ">
               <input
                 placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="p-2 bg-white text-lg outline-none"
               />
               <span className="text-2xl p-2">
@@ -108,7 +134,7 @@ const Attendance = () => {
             </button>
           </motion.div>
         </div>
-        {attendance?.length > 0 ? (
+        {attendanceData?.length > 0 ? (
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             {isListView ? (
               <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
@@ -190,7 +216,7 @@ const Attendance = () => {
             ) : (
               <div className="container bg-white border rounded-md py-5 px-1">
                 <div className="grid grid-cols-4 gap-4">
-                  {attendance.map((employee, i) => (
+                  {attendanceData.map((employee, i) => (
                     <motion.a
                       href={`/employees/${employee.employee_code}`}
                       key={i}
@@ -228,6 +254,7 @@ const Attendance = () => {
         ) : (
           <h3>Chưa có dữ liệu</h3>
         )}
+        {/* <LineChart /> */}
       </div>
     </div>
   );

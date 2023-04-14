@@ -11,11 +11,12 @@ import { ValidateError } from "../../components";
 import { Button } from "../../components";
 import { updateEmployeeProfile } from "../../actions/employeeActions";
 import { HOST_API } from "../../constants/Api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const EditEmployee = () => {
   const dispatch = useDispatch();
   const params = useParams();
+  const navigate = useNavigate();
 
   const [employeeData, setEmployeeData] = useState({});
   const [formData, setFormData] = useState({});
@@ -32,6 +33,7 @@ const EditEmployee = () => {
       .get(`${HOST_API}/staff/detail/${params.username}`)
       .then((response) => {
         setEmployeeData(response.data);
+        setFormData(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -49,13 +51,13 @@ const EditEmployee = () => {
         }
       }
     }
-    if (
-      (!validator.isNumeric(formData.age) &&
-        Number.parseInt(formData.age) > 120) ||
-      Number.parseInt(formData.age) < 18
-    ) {
-      errors.ageError = "Your age isn't valid";
-    }
+    // if (
+    //   (!validator.isNumeric(formData.age) &&
+    //     Number.parseInt(formData.age) > 120) ||
+    //   Number.parseInt(formData.age) < 18
+    // ) {
+    //   errors.ageError = "Your age isn't valid";
+    // }
     return errors;
   };
 
@@ -64,7 +66,9 @@ const EditEmployee = () => {
     e.preventDefault();
     const vadidErrors = validate(formData);
     if (Object.keys(vadidErrors).length === 0) {
-      dispatch(updateEmployeeProfile(formData));
+      dispatch(
+        updateEmployeeProfile(formData.employee_code, formData, navigate)
+      );
     } else {
       setVadidErrors(vadidErrors);
     }
@@ -85,7 +89,7 @@ const EditEmployee = () => {
     } else {
       setAvatar({
         file: null,
-        preview: defaultAvatar,
+        preview: HOST_API.concat(formData.img),
       });
     }
   };
@@ -105,7 +109,9 @@ const EditEmployee = () => {
           <div className="col-start-2 flex items-center justify-center w-full border-b-2 border-slate-300 pb-4">
             <label htmlFor="avatar">
               <img
-                src={avatar.preview}
+                src={
+                  avatar.file ? avatar.preview : HOST_API.concat(formData.img)
+                }
                 alt="Avatar"
                 className="w-32 h-32 object-cover rounded-full overflow-hidden shadow-md"
               />
@@ -120,17 +126,17 @@ const EditEmployee = () => {
             />
           </div>
           <InputForm
-            name="firstname"
+            name="first_name"
             Label="First Name"
             handleChange={handleChange}
-            value={formData.firstname}
+            value={formData.first_name}
             colStart="col-start-1"
           />
           <InputForm
-            name="lastname"
+            name="last_name"
             Label="Last Name"
             handleChange={handleChange}
-            value={formData.lastname}
+            value={formData.last_name}
           />
           <InputForm
             name="position"

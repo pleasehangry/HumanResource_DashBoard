@@ -72,6 +72,7 @@ export const getEmployeeDetails = (username) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
+    console.log(error);
     const message =
       error.response && error.response.data.message
         ? error.response.data.message
@@ -83,31 +84,35 @@ export const getEmployeeDetails = (username) => async (dispatch) => {
   }
 };
 
-export const updateEmployeeProfile = (id, employee) => async (dispatch) => {
-  try {
-    dispatch({
-      type: actionType.START_LOADING,
-    });
+export const updateEmployeeProfile =
+  (id, employee, navigate) => async (dispatch) => {
+    try {
+      dispatch({
+        type: actionType.START_LOADING,
+      });
 
-    const { data } = await api.updateEmployee(id, employee);
+      const { data } = await api.updateEmployee(id, employee);
 
-    dispatch({
-      type: actionType.EMPLOYEE_UPDATE_PROFILE_SUCCESS,
-      payload: data,
-    });
+      dispatch({
+        type: actionType.EMPLOYEE_UPDATE_PROFILE_SUCCESS,
+        payload: data,
+      });
 
-    localStorage.setItem("employeeInfo", JSON.stringify(data));
-  } catch (error) {
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
-    dispatch({
-      type: actionType.EMPLOYEE_UPDATE_PROFILE_FAIL,
-      payload: message,
-    });
-  }
-};
+      navigate("/employees");
+
+      localStorage.setItem("employeeInfo", JSON.stringify(data));
+    } catch (error) {
+      console.log(error);
+      const message =
+        error.response && error.response.data
+          ? error.response.data
+          : error.message;
+      dispatch({
+        type: actionType.EMPLOYEE_UPDATE_PROFILE_FAIL,
+        payload: message,
+      });
+    }
+  };
 
 export const fetchAttandance = (date) => async (dispatch) => {
   try {

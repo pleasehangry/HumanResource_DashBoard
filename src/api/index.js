@@ -33,5 +33,5 @@ export const fetchAttandance = (date) =>
     )}month=${date.month.concat("&")}year=${date.year}`
   );
 export const updateEmployee = (id, updatedUser) =>
-  API.put(`/employee/${id}`, updatedUser);
+  API.put(`/staff/detail/${id}/update`, updatedUser);
 export const deleteEmployee = (id) => API.delete(`/staff/detail/${id}/delete`);
