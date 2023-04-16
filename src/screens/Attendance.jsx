@@ -11,17 +11,6 @@ import {
 import { textVariant, zoomIn } from "../utils/motion";
 import { fetchAttandance } from "../actions/employeeActions";
 import { HOST_API } from "../constants/Api";
-import LineChart from "../components/LineChart";
-
-const data = {
-  January: 100,
-  February: 120,
-  March: 140,
-  April: 160,
-  May: 180,
-  June: 200,
-};
-
 const Attendance = () => {
   const dispatch = useDispatch();
   const today = new Date().toISOString().substr(0, 10);
@@ -30,11 +19,15 @@ const Attendance = () => {
   const [isListView, setIsListView] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const employeeReducer = useSelector((state) => state.employeeReducer);
-  const { attendance } = employeeReducer;
-  const [attendanceData, setAttendanceData] = useState(attendance);
+  var { attendance } = employeeReducer;
+
+  const [attendanceData, setAttendanceData] = useState([]);
 
   useEffect(() => {
-    console.log(employeeReducer);
+    setAttendanceData(attendance);
+  }, [attendance]);
+
+  useEffect(() => {
     const year = date.split("-")[0];
     const month = date.split("-")[1];
     const day = date.split("-")[2];
@@ -45,7 +38,7 @@ const Attendance = () => {
 
   useEffect(() => {
     if (searchTerm !== "") {
-      const filterData = attendanceData.filter((att) => {
+      const filterData = attendance.filter((att) => {
         return (
           att.first_name.includes(searchTerm) ||
           att.last_name.includes(searchTerm)
@@ -156,7 +149,7 @@ const Attendance = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {attendance.map((employee, i) => (
+                    {attendanceData.map((employee, i) => (
                       <motion.tr
                         variants={zoomIn(i * 0.03, 0.5)}
                         initial="hidden"
