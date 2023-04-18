@@ -3,13 +3,21 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import { privateRoutes, publicRoutes } from "./routes";
 import { DefaultLayout } from "./layouts";
-import { useSelector } from "react-redux";
-import NotFound from "./screens/NotFound";
+import { useDispatch, useSelector } from "react-redux";
+import { getEmployeeDetails } from "./actions/employeeActions";
 
 function App() {
   const authData = useSelector((state) => state.authReducer.authData);
   const [authenticated, setAuthenticated] = useState(authData?.id === 1);
-  console.log(authenticated);
+  const dispatch = useDispatch();
+  console.log(authenticated, authData?.id);
+
+  useEffect(() => {
+    if (authData) {
+      dispatch(getEmployeeDetails(authData.id));
+    }
+  });
+
   return (
     <BrowserRouter>
       <Routes>
@@ -47,7 +55,7 @@ function App() {
               path={route.path}
               element={
                 <Layout>
-                  {authenticated ? <Page /> : <Navigate to="/" />}
+                  {authenticated ? <Page /> : <Navigate to="/login" />}
                 </Layout>
               }
             />

@@ -14,6 +14,7 @@ import { UserProfile } from "./";
 import { useStateContext } from "../context/ContextProvider";
 import { fadeIn } from "../utils/motion";
 import { useSelector } from "react-redux";
+import { HOST_API } from "../constants/Api";
 
 const NavButton = ({ title, customFunc, icon, dotColor }) => (
   <button
@@ -75,7 +76,7 @@ const Navbar = () => {
 
       {employeeInfo && (
         <div className="flex">
-          <NavButton
+          {/* <NavButton
             title="Chat"
             dotColor="#03C9D7"
             customFunc={() => {
@@ -90,7 +91,7 @@ const Navbar = () => {
               handleClick("notification");
             }}
             icon={<AiOutlineNotification />}
-          />
+          /> */}
           <div>
             <div
               className="flex items-center gap-2 cursor-pointer p-1
@@ -99,13 +100,13 @@ const Navbar = () => {
             >
               <img
                 className="rounded-full w-8 h-8"
-                src="https://avatars.githubusercontent.com/u/81598637?s=40&v=4"
+                src={HOST_API.concat(employeeInfo.img)}
                 alt="Avatar"
               ></img>
               <p>
                 <span className="text-gray-400 text-14">Hi, </span>{" "}
                 <span className="text-gray-400 text-14 font-bold ml-1">
-                  {employeeInfo.firt_name}
+                  {employeeInfo.first_name}
                 </span>
               </p>
               <AiOutlineArrowDown className="text-gray-400 text-14" />
@@ -114,7 +115,7 @@ const Navbar = () => {
           {/* {isClicked.cart && <Cart />}
         {isClicked.chat && <Chat />}
         {isClicked.notification && <Notification />} */}
-          {isClicked.userProfile && <UserProfile />}
+          {/* {isClicked.userProfile && <UserProfile />} */}
         </div>
       )}
     </motion.div>

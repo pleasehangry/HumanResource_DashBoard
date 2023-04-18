@@ -6,7 +6,7 @@ import validator from "validator";
 
 import defaultAvatar from "../../assets/images/default_avatar.png";
 import InputForm from "./InputForm";
-import { ValidateError } from "../../components";
+import { Loader, ValidateError } from "../../components";
 import { Button } from "../../components";
 import { addEmployee } from "../../actions/employeeActions";
 import { register } from "../../actions/authAction";
@@ -15,7 +15,8 @@ import { useNavigate } from "react-router-dom";
 const AddEmployee = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isLoading = useSelector((state) => state.employeeReducer.loading);
+  const employeeReducer = useSelector((state) => state.employeeReducer);
+  const { loading, error } = employeeReducer;
 
   const [avatar, setAvatar] = useState({
     file: null,
@@ -23,8 +24,9 @@ const AddEmployee = () => {
   });
 
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
+    employee_code: "",
+    first_name: "",
+    last_name: "",
     phone: "",
     department: "",
     position: "",
@@ -33,23 +35,13 @@ const AddEmployee = () => {
   });
 
   const [authData, setAuthData] = useState({
+    username: "",
     email: "",
     password: "",
+    password2: "",
   });
 
-  const clear = () => {
-    setFormData({
-      firstname: "",
-      lastname: "",
-      phone: "",
-      email: "",
-      password: "",
-      department: "",
-      position: "",
-      age: "",
-      img: null,
-    });
-  };
+  console.log(authData, formData);
 
   const [vadidErrors, setVadidErrors] = useState({});
 
@@ -67,9 +59,9 @@ const AddEmployee = () => {
         }
       }
     }
-    if (!validator.isStrongPassword(authData.password)) {
-      errors.passwordError = "Your password isn't strong enough!";
-    }
+    // if (!validator.isStrongPassword(authData.password)) {
+    //   errors.passwordError = "Your password isn't strong enough!";
+    // }
     if (!validator.isEmail(authData.email)) {
       errors.emailError = "Your email isn't valid";
     }
@@ -88,9 +80,8 @@ const AddEmployee = () => {
     e.preventDefault();
     const vadidErrors = validate(formData);
     if (Object.keys(vadidErrors).length === 0) {
-      dispatch(addEmployee(formData));
-      dispatch(register(authData, navigate));
-      clear();
+      console.log("Dispatch");
+      dispatch(addEmployee(formData, authData, navigate));
     } else {
       setVadidErrors(vadidErrors);
     }
@@ -103,8 +94,14 @@ const AddEmployee = () => {
   useEffect(() => {
     setAuthData({
       ...authData,
-      email: formData.firstname.concat(formData.lastname).concat("@gmail.com"),
-      password: formData.firstname.concat(formData.lastname),
+      email: formData.first_name
+        .concat(formData.last_name)
+        .concat("@gmail.com"),
+      username: formData.first_name.concat(formData.last_name),
+      password: formData.first_name
+        .concat(formData.last_name)
+        .concat(formData.employee_code),
+      password2: authData.password,
     });
   }, [formData]);
 
@@ -131,6 +128,7 @@ const AddEmployee = () => {
       animate={{ opacity: 1 }}
       className="p-6 m-4 bg-white rounded-md shadow-md"
     >
+      {loading && <Loader />}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-3xl font-medium">Thêm nhân viên</h2>
         <AiOutlineUserAdd className="w-6 h-6 text-gray-400" />
@@ -155,17 +153,23 @@ const AddEmployee = () => {
             />
           </div>
           <InputForm
-            name="firstname"
-            Label="First Name"
+            name="employee_code"
+            Label="Employee Code"
             handleChange={handleChange}
-            value={formData.firstname}
+            value={formData.employee_code}
             colStart="col-start-1"
           />
           <InputForm
-            name="lastname"
+            name="first_name"
+            Label="First Name"
+            handleChange={handleChange}
+            value={formData.first_name}
+          />
+          <InputForm
+            name="last_name"
             Label="Last Name"
             handleChange={handleChange}
-            value={formData.lastname}
+            value={formData.last_name}
           />
           <InputForm
             name="email"
@@ -177,6 +181,15 @@ const AddEmployee = () => {
             value={authData.email}
             error={vadidErrors.emailError}
             colStart="col-start-1"
+          />
+          <InputForm
+            name="username"
+            Label="Username"
+            type="text"
+            handleChange={(e) =>
+              setAuthData({ ...authData, username: e.target.value })
+            }
+            value={authData.username}
           />
           <InputForm
             name="password"
@@ -218,6 +231,7 @@ const AddEmployee = () => {
           {Object.values(vadidErrors).map((error) => (
             <ValidateError key={error} text={error} />
           ))}
+          {error && <ValidateError text={error} />}
         </div>
         <div className="w-full flex items-center justify-center">
           <Button type="submit" primary className="mt-4 w-2/5">

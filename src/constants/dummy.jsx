@@ -1,4 +1,5 @@
 import {
+  AiOutlineBarChart,
   AiOutlineProject,
   AiOutlineTeam,
   AiOutlineUser,
@@ -22,6 +23,11 @@ export const links = [
         name: "employees",
         icon: <AiOutlineTeam />,
         link: routesConfig.employees,
+      },
+      {
+        name: "chart",
+        icon: <AiOutlineBarChart />,
+        link: routesConfig.chart,
       },
       // {
       //   name: "Me",

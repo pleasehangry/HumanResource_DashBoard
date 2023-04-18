@@ -1,5 +1,4 @@
 import routesConfig from "../config/route";
-import LoginLayout from "../layouts/LoginLayout";
 import {
   AddEmployees,
   Attendance,
@@ -9,12 +8,14 @@ import {
   Employee,
   EditEmployee,
   DetailInfor,
+  chart,
 } from "../screens";
 
 const publicRoutes = [
   { path: routesConfig.attendance, component: Attendance },
   { path: routesConfig.profile, component: Employee },
   { path: routesConfig.login, component: Login, layout: null },
+  { path: routesConfig.chart, component: chart },
   { path: routesConfig.register, component: Register, layout: null },
   { path: routesConfig.detailInfor, component: DetailInfor, layout: null },
 ];

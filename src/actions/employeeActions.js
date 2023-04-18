@@ -3,39 +3,41 @@ import * as api from "../api/index";
 import * as actionType from "../constants/employeeConstants";
 import { HOST_API } from "../constants/Api";
 
-export const addEmployee = (formData, formAuth) => async (dispatch) => {
-  try {
-    dispatch({ typeof: actionType.START_LOADING });
-    const { data: authData } = await api.register(formAuth);
+export const addEmployee =
+  (formData, formAuth, navigate) => async (dispatch) => {
+    try {
+      dispatch({ type: actionType.START_LOADING });
+      const { data: authData } = await api.register(formAuth);
 
-    const config = {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "multipart/form-data",
-        Authorization: "Token ".concat(authData.token),
-      },
-    };
+      const config = {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+          Authorization: "Token ".concat(authData.token),
+        },
+      };
 
-    const { data: newEmployee } = await axios.post(
-      HOST_API.concat("/staff/create"),
-      formData,
-      config
-    );
+      const { data: newEmployee } = await axios.post(
+        HOST_API.concat("/staff/create"),
+        formData,
+        config
+      );
 
-    dispatch({ type: actionType.EMPLOYEE_ADD_SUCCESS, payload: newEmployee });
-    alert("Thêm nhân viên thành công");
-    navigate("/employees");
-  } catch (error) {
-    const message =
-      error.response && error.response.data
-        ? error.response.data
-        : error.message;
-    dispatch({
-      type: actionType.EMPLOYEE_ADD_FAIL,
-      payload: message,
-    });
-  }
-};
+      dispatch({ type: actionType.EMPLOYEE_ADD_SUCCESS, payload: newEmployee });
+      alert("Thêm nhân viên thành công");
+      navigate("/employees");
+    } catch (error) {
+      console.log(error);
+      const message =
+        error.response && error.response.data
+          ? error.response.data
+          : error.message;
+      dispatch({
+        type: actionType.EMPLOYEE_ADD_FAIL,
+        payload: message,
+      });
+    }
+  };
 export const addEmployeeInfo = (formData) => async (dispatch) => {
   try {
     dispatch({ type: actionType.START_LOADING });
@@ -213,5 +215,44 @@ export const deleteEmployee = (id) => async (dispatch) => {
       type: actionType.EMPLOYEE_DELETE_FAIL,
       payload: message,
     });
+  }
+};
+
+export const CheckIn = (employee_code) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actionType.START_LOADING,
+    });
+
+    const { data } = await api.CheckIn(employee_code);
+    console.log(data);
+    dispatch({
+      type: actionType.CHECK_IN_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    console.log(error);
+    const message =
+      error.response && error.response.data
+        ? error.response.data
+        : error.message;
+    dispatch({
+      type: actionType.CHECK_IN_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const fetchAttandanceChart = async (month, year) => {
+  try {
+    const { data } = await api.fetchAttandanceChart(month, year);
+    return data;
+  } catch (error) {
+    console.log(error);
+    const message =
+      error.response && error.response.data
+        ? error.response.data
+        : error.message;
+    return message;
   }
 };
