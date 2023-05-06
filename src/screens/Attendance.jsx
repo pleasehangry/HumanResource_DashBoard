@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { getDatabase, ref, onValue, off, set } from "firebase/database";
 import {
   AiOutlineOrderedList,
   AiOutlinePicLeft,
   AiOutlineSearch,
 } from "react-icons/ai";
 
+import app from "../config/firebaseConfig";
 import { textVariant, zoomIn } from "../utils/motion";
 import { fetchAttandance } from "../actions/employeeActions";
 import { HOST_API } from "../constants/Api";
+
+const database = getDatabase(app);
+const databaseRef = ref(database, "messages");
+
 const Attendance = () => {
   const dispatch = useDispatch();
   const today = new Date().toISOString().substr(0, 10);
@@ -35,6 +40,33 @@ const Attendance = () => {
     console.log(dateParams);
     dispatch(fetchAttandance(dateParams));
   }, [dispatch, date]);
+
+  useEffect(() => {
+    // Event listener for value changes
+    const onDataChange = async (snapshot) => {
+      // Get the message value from the snapshot
+      const newMessage = snapshot.val();
+
+      // Check if the message is different from the known value
+      if (newMessage !== "unknown") {
+        // Make your API call here
+        const year = date.split("-")[0];
+        const month = date.split("-")[1];
+        const day = date.split("-")[2];
+        const dateParams = { day, month, year };
+        dispatch(fetchAttandance(dateParams));
+        await set(databaseRef, "unknown");
+        console.log("RECALL API");
+      }
+    };
+
+    // Attach the listener
+    onValue(databaseRef, onDataChange);
+    // Clean up the listener on component unmount
+    return () => {
+      off(databaseRef, "value", onDataChange);
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     if (searchTerm !== "") {
