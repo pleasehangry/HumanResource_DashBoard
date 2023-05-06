@@ -29,7 +29,6 @@ const Employees = () => {
     if (userInfo?.id == 1) {
       dispatch(fetchEmployees(currentPage));
     } else {
-      alert("Bạn chưa đăng nhập");
       navigate("/login");
     }
   }, [dispatch, employeesState]);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
+import { getDatabase, ref, onValue, off, set } from "firebase/database";
 import {
   AiOutlineCheck,
   AiOutlineOrderedList,
@@ -8,10 +9,15 @@ import {
   AiOutlineSearch,
 } from "react-icons/ai";
 
+import app from "../config/firebaseConfig";
 import { textVariant, zoomIn } from "../utils/motion";
 import { CheckIn, fetchAttandance } from "../actions/employeeActions";
 import { HOST_API } from "../constants/Api";
-import { Button, Loader } from "../components";
+import { Loader } from "../components";
+
+const database = getDatabase(app);
+const databaseRef = ref(database, "messages");
+
 const Attendance = () => {
   const dispatch = useDispatch();
   const today = new Date().toISOString().substr(0, 10);
@@ -21,31 +27,38 @@ const Attendance = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const employeeReducer = useSelector((state) => state.employeeReducer);
   const { attendance, employeeInfo, loading } = employeeReducer;
-  const [isCheckIn, setIsCheckIn] = useState(false);
   const [attendanceData, setAttendanceData] = useState(attendance);
 
   console.log(attendance);
+
   useEffect(() => {
     const year = date.split("-")[0];
     const month = date.split("-")[1];
     const day = date.split("-")[2];
     const dateParams = { day, month, year };
     dispatch(fetchAttandance(dateParams));
-  }, [date, dispatch, isCheckIn]);
 
-  useEffect(() => {
-    setAttendanceData(attendance);
-    if (!attendance) setIsCheckIn(false);
-    else {
-      for (let att of attendance) {
-        if (att.employee_code === employeeInfo?.employee_code) {
-          if (att.time_in) {
-            setIsCheckIn(true);
-          }
-        }
+    // Event listener for value changes
+    const onDataChange = async (snapshot) => {
+      // Get the message value from the snapshot
+      const newMessage = snapshot.val();
+
+      // Check if the message is different from the known value
+      if (newMessage !== "unknown") {
+        console.log(newMessage);
+        dispatch(CheckIn(newMessage));
+        await set(databaseRef, "unknown");
       }
-    }
-  }, [attendance, employeeInfo?.employee_code]);
+    };
+
+    // Attach the listener
+    onValue(databaseRef, onDataChange);
+
+    // Clean up the listener on component unmount
+    return () => {
+      off(databaseRef, "value", onDataChange);
+    };
+  }, [date, dispatch]);
 
   useEffect(() => {
     if (searchTerm !== "") {
@@ -59,15 +72,12 @@ const Attendance = () => {
     } else {
       setAttendanceData(attendance);
     }
-  }, [searchTerm]);
+  }, [searchTerm, attendance]);
 
   const handleChangeDate = (e) => {
     setDate(e.target.value);
   };
 
-  const handleCheckIn = () => {
-    dispatch(CheckIn(employeeInfo.employee_code));
-  };
   if (loading) {
     return <Loader />;
   } else {
@@ -83,16 +93,6 @@ const Attendance = () => {
             >
               Chấm công
             </motion.h2>
-            {employeeInfo && (
-              <Button
-                primary
-                onClick={handleCheckIn}
-                rightIcon={isCheckIn ? <AiOutlineCheck /> : null}
-                disabled={isCheckIn}
-              >
-                Điểm danh
-              </Button>
-            )}
           </div>
           <div className="my-2 flex sm:flex-row flex-col">
             <motion.div
