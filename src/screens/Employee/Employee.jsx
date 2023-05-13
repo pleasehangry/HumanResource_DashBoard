@@ -3,33 +3,72 @@ import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import axios from "axios";
 
-import { Button } from "../../components";
+import app from "../../config/firebaseConfig";
+import { Button, Loader } from "../../components";
 import { useParams } from "react-router-dom";
-import { fetchEmployee } from "../../api";
+import { CheckIn } from "../../actions/employeeActions";
 import { HOST_API } from "../../constants/Api";
+import { getDatabase, ref, onValue, off, set } from "firebase/database";
+
+const database = getDatabase(app);
+const databaseRef = ref(database, "messages");
 
 const Employee = () => {
+  const dispatch = useDispatch();
   const { username } = useParams();
   const profile = useSelector((state) => state.authReducer.authData);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
-  const [employeeData, setEmployeeData] = useState(false);
-
+  const [employeeData, setEmployeeData] = useState({});
+  const [loading, setLoading] = useState(false);
+  var message = "Unknown";
   useEffect(() => {
     axios
-      .get(`${HOST_API}/staff/detail/${username}`)
+      .get(
+        `${HOST_API}/staff/attendance/${username}/statistical?month=5&year=2023`
+      )
       .then((response) => {
+        console.log(response.data);
         setEmployeeData(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, [username]);
 
-  useEffect(() => {
-    if (profile?.username && profile?.username == username) {
+    if (profile?.username && profile?.username === username) {
       setIsCurrentUser(true);
     }
-  }, [username, profile?.username]);
+    const onDataChange = async (snapshot) => {
+      // Get the message value from the snapshot
+      message = snapshot.val();
+
+      // Check if the message is different from the known value
+      if (message === username) {
+        setLoading(true);
+        dispatch(CheckIn(message));
+        await set(databaseRef, "Unknown");
+        axios
+          .get(
+            `${HOST_API}/staff/attendance/${username}/statistical?month=5&year=2023`
+          )
+          .then((response) => {
+            console.log(response.data);
+            setEmployeeData(response.data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+        setLoading(false);
+      }
+    };
+
+    // Attach the listener
+    onValue(databaseRef, onDataChange);
+
+    // Clean up the listener on component unmount
+    return () => {
+      off(databaseRef, "value", onDataChange);
+    };
+  }, [dispatch, username, profile?.username, message]);
 
   return (
     <motion.div
@@ -38,6 +77,7 @@ const Employee = () => {
       exit={{ opacity: 0 }}
       className="p-6 m-4 bg-white rounded-md shadow-md"
     >
+      {loading && <Loader />}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-3xl font-medium">Thông tin cá nhân</h2>
         {isCurrentUser && (
@@ -58,10 +98,12 @@ const Employee = () => {
           </h2>
           <p className="text-base text-textColor">{employeeData.position}</p>
           <p className="font-light text-sm">Earth</p>
-          <div className="flex items-center justify-center gap-4 mt-3">
-            <Button primary>Contact</Button>
-            <Button primary>Messagge</Button>
-          </div>
+          {!isCurrentUser && (
+            <div className="flex items-center justify-center gap-4 mt-3">
+              <Button primary>Contact</Button>
+              <Button primary>Messagge</Button>
+            </div>
+          )}
         </div>
         <div className="w-full flex flex-col 2xl:w-1/3">
           <div className="flex-1 bg-white rounded-lg shadow-xl p-8">
@@ -103,96 +145,40 @@ const Employee = () => {
             <h4 className="text-xl text-gray-900 font-bold">Activity log</h4>
             <div className="relative px-4">
               <div className="absolute h-full border border-dashed border-opacity-20 border-secondary"></div>
-
-              <div className="flex items-center w-full my-6 -ml-1.5">
-                <div className="w-1/12 z-10">
-                  <div className="w-3.5 h-3.5 bg-blue-600 rounded-full"></div>
-                </div>
-                <div className="w-11/12">
-                  <p className="text-sm">Profile informations changed.</p>
-                  <p className="text-xs text-gray-500">3 min ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-center w-full my-6 -ml-1.5">
-                <div className="w-1/12 z-10">
-                  <div className="w-3.5 h-3.5 bg-blue-600 rounded-full"></div>
-                </div>
-                <div className="w-11/12">
-                  <p className="text-sm">
-                    Connected with{" "}
-                    <a href="#" className="text-blue-600 font-bold">
-                      Colby Covington
-                    </a>
-                    .
-                  </p>
-                  <p className="text-xs text-gray-500">15 min ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-center w-full my-6 -ml-1.5">
-                <div className="w-1/12 z-10">
-                  <div className="w-3.5 h-3.5 bg-blue-600 rounded-full"></div>
-                </div>
-                <div className="w-11/12">
-                  <p className="text-sm">
-                    Invoice{" "}
-                    <a href="#" className="text-blue-600 font-bold">
-                      #4563
-                    </a>{" "}
-                    was created.
-                  </p>
-                  <p className="text-xs text-gray-500">57 min ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-center w-full my-6 -ml-1.5">
-                <div className="w-1/12 z-10">
-                  <div className="w-3.5 h-3.5 bg-blue-600 rounded-full"></div>
-                </div>
-                <div className="w-11/12">
-                  <p className="text-sm">
-                    Message received from{" "}
-                    <a href="#" className="text-blue-600 font-bold">
-                      Cecilia Hendric
-                    </a>
-                    .
-                  </p>
-                  <p className="text-xs text-gray-500">1 hour ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-center w-full my-6 -ml-1.5">
-                <div className="w-1/12 z-10">
-                  <div className="w-3.5 h-3.5 bg-blue-600 rounded-full"></div>
-                </div>
-                <div className="w-11/12">
-                  <p className="text-sm">
-                    New order received{" "}
-                    <a href="#" className="text-blue-600 font-bold">
-                      #OR9653
-                    </a>
-                    .
-                  </p>
-                  <p className="text-xs text-gray-500">2 hours ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-center w-full my-6 -ml-1.5">
-                <div className="w-1/12 z-10">
-                  <div className="w-3.5 h-3.5 bg-blue-600 rounded-full"></div>
-                </div>
-                <div className="w-11/12">
-                  <p className="text-sm">
-                    Message received from{" "}
-                    <a href="#" className="text-blue-600 font-bold">
-                      Jane Stillman
-                    </a>
-                    .
-                  </p>
-                  <p className="text-xs text-gray-500">2 hours ago</p>
-                </div>
-              </div>
+              {employeeData?.activity_log ? (
+                employeeData?.activity_log.reverse().map((day, i) => {
+                  return (
+                    <div key={i}>
+                      {day.time_out && (
+                        <div className="flex items-center w-full my-6 -ml-1.5">
+                          <div className="w-1/12 z-10">
+                            <div className="w-3.5 h-3.5 bg-blue-600 rounded-full"></div>
+                          </div>
+                          <div className="w-11/12 bg-orange-300 rounded-md overflow-hidden p-2">
+                            <p className="text-sm">
+                              Check out at {day.time_out.slice(0, 5)}.
+                            </p>
+                            <p className="text-xs text-gray-500">{day.date}</p>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex items-center w-full my-6 -ml-1.5">
+                        <div className="w-1/12 z-10">
+                          <div className="w-3.5 h-3.5 bg-blue-600 rounded-full"></div>
+                        </div>
+                        <div className="w-11/12 bg-green-300 rounded-md overflow-hidden p-2">
+                          <p className="text-sm">
+                            Check in at {day.time_in.slice(0, 5)}.
+                          </p>
+                          <p className="text-xs text-gray-500">{day.date}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p>There no activities</p>
+              )}
             </div>
           </div>
         </div>
@@ -203,10 +189,11 @@ const Employee = () => {
             <div className="px-6 py-6 bg-gray-100 border border-gray-300 rounded-lg shadow-xl">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-indigo-600">
-                  Total Revenue
+                  Total Salary
                 </span>
                 <span className="text-xs bg-gray-200 hover:bg-gray-500 text-gray-500 hover:text-gray-200 px-2 py-1 rounded-lg transition duration-200 cursor-default">
-                  7 days
+                  Worked Hours:{" "}
+                  {employeeData ? employeeData?.total_hours?.slice(0, 1) : 0}
                 </span>
               </div>
               <div className="flex items-center justify-between mt-6">
@@ -229,7 +216,10 @@ const Employee = () => {
                 <div className="flex flex-col">
                   <div className="flex items-end">
                     <span className="text-2xl 2xl:text-3xl font-bold">
-                      $8,141
+                      {employeeData?.total_hours
+                        ? 200 * parseInt(employeeData.total_hours?.slice(0, 1))
+                        : 0}{" "}
+                      $
                     </span>
                     <div className="flex items-center ml-2 mb-1">
                       <svg

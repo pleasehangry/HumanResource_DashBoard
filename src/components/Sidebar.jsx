@@ -4,7 +4,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { motion, sync } from "framer-motion";
 
 import { useStateContext } from "../context/ContextProvider";
-import { links } from "../constants/dummy";
+import { adminLinks, memberLinks } from "../constants/dummy";
 import {
   AiFillShop,
   AiOutlineDoubleLeft,
@@ -21,6 +21,10 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const authData = useSelector((state) => state.authReducer.authData);
   const { activeMenu, setActiveMenu, screenSize } = useStateContext();
+  
+  const mLinks = {...memberLinks, [memberLinks.links]: authData.username}
+  const nav_links = authData?.id == 1 ? adminLinks : mLinks;
+
   const handleCloseSidebar = () => {
     if (activeMenu && screenSize <= 900) {
       setActiveMenu(false);
@@ -86,7 +90,7 @@ const Sidebar = () => {
             animate="show"
             className="mt-10"
           >
-            {links.map((item) => (
+            {nav_links.map((item) => (
               <motion.div
                 variants={menuVariant}
                 initial="hidden"

@@ -18,6 +18,7 @@ const Login = () => {
   const authReducer = useSelector((state) => state.authReducer);
 
   const { authData, loading, serverErrors } = authReducer;
+  console.log(authReducer);
 
   useEffect(() => {
     if (authData != null) {

@@ -6,6 +6,7 @@ const routes = {
   attendance: "/",
   chat: "/chat",
   task: "/task",
+  chart: "/chart",
   login: "/login",
   register: "/register",
   detailInfor: "/detail_infor",

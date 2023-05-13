@@ -35,3 +35,16 @@ export const fetchAttandance = (date) =>
 export const updateEmployee = (id, updatedUser) =>
   API.put(`/staff/detail/${id}/update`, updatedUser);
 export const deleteEmployee = (id) => API.delete(`/staff/detail/${id}/delete`);
+
+// attendance
+
+export const CheckIn = (employee_code) =>
+  API.post(`/staff/attendance/${employee_code}/create`);
+
+export const fetchAttandanceChart = (month, year) =>
+  API.get(
+    `/staff/attendance/statisticalbymonth?month=${month.concat(
+      "&"
+    )}year=${year}`
+  );
+
