@@ -21,9 +21,8 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const authData = useSelector((state) => state.authReducer.authData);
   const { activeMenu, setActiveMenu, screenSize } = useStateContext();
-  
-  const mLinks = {...memberLinks, [memberLinks.links]: authData.username}
-  const nav_links = authData?.id == 1 ? adminLinks : mLinks;
+
+  const nav_links = authData?.id == 1 ? adminLinks : memberLinks;
 
   const handleCloseSidebar = () => {
     if (activeMenu && screenSize <= 900) {

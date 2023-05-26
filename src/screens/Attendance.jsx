@@ -14,11 +14,13 @@ import { textVariant, zoomIn } from "../utils/motion";
 import { CheckIn, fetchAttandance } from "../actions/employeeActions";
 import { HOST_API } from "../constants/Api";
 import { Loader } from "../components";
+import { useNavigate } from "react-router-dom";
 
 const database = getDatabase(app);
 const databaseRef = ref(database, "messages");
 
 const Attendance = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const today = new Date().toISOString().substr(0, 10);
 
@@ -26,11 +28,11 @@ const Attendance = () => {
   const [isListView, setIsListView] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const employeeReducer = useSelector((state) => state.employeeReducer);
+  const authData = useSelector((state) => state.authReducer.authData);
   const { attendance, employeeInfo, loading } = employeeReducer;
   const [attendanceData, setAttendanceData] = useState(attendance);
 
   useEffect(() => {
-    console.log(attendanceData);
     const year = date.split("-")[0];
     const month = date.split("-")[1];
     const day = date.split("-")[2];
@@ -38,6 +40,7 @@ const Attendance = () => {
     dispatch(fetchAttandance(dateParams));
     // Event listener for value changes
     const onDataChange = async (snapshot) => {
+      ``;
       // Get the message value from the snapshot
       const newMessage = snapshot.val();
 
@@ -69,6 +72,14 @@ const Attendance = () => {
       setAttendanceData(filterData);
     } else {
       setAttendanceData(attendance);
+    }
+    if (attendanceData) {
+      console.log(attendanceData);
+      const EM = attendanceData.find((att) => att.id == authData.id);
+      console.log(EM);
+      if (EM && EM.id !== 1) {
+        navigate(`/employees/${EM.employee_code}`);
+      }
     }
   }, [searchTerm, attendance]);
 
