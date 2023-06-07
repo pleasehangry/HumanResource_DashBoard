@@ -10,6 +10,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { fetchAttandanceChart } from "../../actions/employeeActions";
+import { Dropdown } from "../../components";
 
 ChartJS.register(
   CategoryScale,
@@ -35,7 +36,7 @@ const Chart = () => {
       });
   }, []);
 
-  const options = {
+  const options1 = {
     indexAxis: "y",
     elements: {
       bar: {
@@ -55,8 +56,28 @@ const Chart = () => {
       },
     },
   };
+  const options2 = {
+    indexAxis: "y",
+    elements: {
+      bar: {
+        borderWidth: 2,
+      },
+    },
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "right",
+      },
+      title: {
+        display: true,
+        text: "Sơ đồ số giờ điểm danh của các nhân viên trong tháng ".concat(
+          today.split("-")[1]
+        ),
+      },
+    },
+  };
 
-  const data = {
+  const data1 = {
     labels: attendanceChart.map((att) => att.first_name),
     datasets: [
       {
@@ -67,9 +88,25 @@ const Chart = () => {
       },
     ],
   };
+  const data2 = {
+    labels: attendanceChart.map((att) => att.first_name),
+    datasets: [
+      {
+        label: "Số giờ",
+        data: attendanceChart.map((att) => att.total_hours),
+        borderColor: "rgb(255, 247 ,208)",
+        backgroundColor: "rgb(255, 247, 208, 0.7)",
+      },
+    ],
+  };
   return (
-    <div className="flex items-center justify-center">
-      <Bar options={options} data={data} />
+    <div className="flex-col items-center justify-center p-12">
+      <div className="flex items-center justify-center">
+        <Bar options={options1} data={data1} />
+      </div>
+      <div className="mt-4">
+        <Bar options={options2} data={data2} />
+      </div>
     </div>
   );
 };

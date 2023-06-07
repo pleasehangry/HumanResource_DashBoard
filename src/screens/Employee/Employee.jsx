@@ -24,7 +24,7 @@ const Employee = () => {
   useEffect(() => {
     axios
       .get(
-        `${HOST_API}/staff/attendance/${username}/statistical?month=5&year=2023`
+        `${HOST_API}/staff/attendance/${username}/statistical?month=6 &year=2023`
       )
       .then((response) => {
         console.log(response.data);
