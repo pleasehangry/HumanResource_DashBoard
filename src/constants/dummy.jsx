@@ -34,16 +34,16 @@ export const adminLinks = [
       //   icon: <AiOutlineUser />,
       //   link: routesConfig.profile,
       // },
-      {
-        name: "Task",
-        icon: <AiOutlineProject />,
-        link: routesConfig.task,
-      },
-      {
-        name: "Chat",
-        icon: <BsChatDots />,
-        link: routesConfig.chat,
-      },
+      // {
+      //   name: "Task",
+      //   icon: <AiOutlineProject />,
+      //   link: routesConfig.task,
+      // },
+      // {
+      //   name: "Chat",
+      //   icon: <BsChatDots />,
+      //   link: routesConfig.chat,
+      // },
     ],
   },
 ];
