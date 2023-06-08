@@ -13,18 +13,29 @@ import { getDatabase, ref, onValue, off, set } from "firebase/database";
 const database = getDatabase(app);
 const databaseRef = ref(database, "messages");
 
+const today = new Date();
+const currentMonth = (today.getMonth() + 1).toString();
+const currentYear = today.getFullYear().toString();
+
 const Employee = () => {
   const dispatch = useDispatch();
+  const [month, setMonth] = useState(currentMonth);
   const { username } = useParams();
   const profile = useSelector((state) => state.authReducer.authData);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [employeeData, setEmployeeData] = useState({});
   const [loading, setLoading] = useState(false);
   var message = "Unknown";
+  var month_filter = [];
+
+  for (let i = 1; i <= currentMonth; i++) {
+    month_filter.push(i);
+  }
+
   useEffect(() => {
     axios
       .get(
-        `${HOST_API}/staff/attendance/${username}/statistical?month=6 &year=2023`
+        `${HOST_API}/staff/attendance/${username}/statistical?month=${month}&year=${currentYear}`
       )
       .then((response) => {
         console.log(response.data);
@@ -48,7 +59,7 @@ const Employee = () => {
         await set(databaseRef, "Unknown");
         axios
           .get(
-            `${HOST_API}/staff/attendance/${username}/statistical?month=5&year=2023`
+            `${HOST_API}/staff/attendance/${username}/statistical?month=${month}&year=2023`
           )
           .then((response) => {
             console.log(response.data);
@@ -68,7 +79,7 @@ const Employee = () => {
     return () => {
       off(databaseRef, "value", onDataChange);
     };
-  }, [dispatch, username, profile?.username, message]);
+  }, [dispatch, month, username, profile?.username, message]);
 
   return (
     <motion.div
@@ -141,7 +152,21 @@ const Employee = () => {
               </li>
             </ul>
           </div>
-          <div className="flex-1 bg-white rounded-lg shadow-xl mt-4 p-8">
+          <div className="relative flex-1 bg-white rounded-lg shadow-xl mt-4 p-8">
+            <div className="absolute top-1 right-1 bg-slate-50 p-2 round-sm shadow-md border">
+              <select
+                value={month}
+                name="month"
+                id="month"
+                onChange={(e) => setMonth(e.target.value)}
+              >
+                {month_filter.map((item, i) => (
+                  <option value={item} key={i}>
+                    Tháng {item}
+                  </option>
+                ))}
+              </select>
+            </div>
             <h4 className="text-xl text-gray-900 font-bold">Activity log</h4>
             <div className="relative px-4">
               <div className="absolute h-full border border-dashed border-opacity-20 border-secondary"></div>
